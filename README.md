@@ -4,7 +4,7 @@
 
 Make sure to install dependencies:
 
-```bash
+````bash
 # npm
 npm install
 
@@ -15,7 +15,6 @@ Start the development server on `http://localhost:3000`:
 ```bash
 # npm
 npm run dev
-
 
 ## Production
 
@@ -30,3 +29,4 @@ Locally preview production build:
 ```bash
 # npm
 npm run preview
+````
