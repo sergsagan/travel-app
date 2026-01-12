@@ -8,7 +8,7 @@ const envSchemaDef = z.object({
   TURSO_AUTH_TOKEN: z.string(),
 });
 
-export type EnvSchema = z.infer<typeof envSchemaDef>;
+export type envSchema = z.infer<typeof envSchemaDef>;
 
 tryParseEnv(envSchemaDef);
 
