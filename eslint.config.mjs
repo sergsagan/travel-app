@@ -11,6 +11,7 @@ export default withNuxt(
       typescript: true,
       ignores: [
         '**/.github/workflows/**',
+        '**/migrations/*',
       ],
       formatters: true,
       stylistic: {
