@@ -1,11 +1,18 @@
-import { z } from 'zod'
-import tryParseEnv from "./try-parse-env";
+import { z } from 'zod';
+
+import tryParseEnv from './tryParseEnv';
 
 const envSchema = z.object({
-    NODE_ENV: z.string()
-})
-export type envSchema = z.infer<typeof envSchema>
+  NODE_ENV: z.string(),
+  TURSO_DATABASE_URL: z.string(),
+  TURSO_AUTH_TOKEN: z.string(),
+});
 
-tryParseEnv(envSchema)
+export type Env = z.infer<typeof envSchema>;
 
-export default envSchema.parse(process.env)
+export function getEnv(): Env {
+  // eslint-disable-next-line node/no-process-env
+  const parsed = envSchema.parse(process.env)
+  tryParseEnv(envSchema, parsed)
+  return parsed
+}
