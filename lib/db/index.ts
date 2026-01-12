@@ -1,8 +1,10 @@
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/libsql';
 
-import env from '../env';
+import { getEnv } from '../env'
 import * as schema from './schema';
+
+const env = getEnv()
 // You can specify any property from the turso connection options
 const db = drizzle({
   connection: {

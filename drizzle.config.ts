@@ -1,7 +1,9 @@
 import 'dotenv/config';
 import { defineConfig } from 'drizzle-kit';
 
-import env from './lib/env';
+import { getEnv } from './lib/env'
+
+const env = getEnv()
 
 export default defineConfig({
   out: './lib/db/migrations',
