@@ -2,7 +2,7 @@ import { relations, sql } from "drizzle-orm";
 import {sqliteTable, text, integer, index, int} from "drizzle-orm/sqlite-core";
 
 export const user = sqliteTable("user", {
-  id: int().primaryKey({ autoIncrement: true }),
+  id: text().primaryKey().notNull(),
   name: text().notNull(),
   email: text().notNull().unique(),
   emailVerified: integer({mode: 'boolean'})
@@ -17,7 +17,7 @@ export const user = sqliteTable("user", {
 export const session = sqliteTable(
   "session",
   {
-    id: int().primaryKey({ autoIncrement: true }),
+    id: text().primaryKey().notNull(),
     expiresAt: integer().notNull(),
     token: text().notNull().unique(),
     createdAt: integer()
@@ -26,21 +26,17 @@ export const session = sqliteTable(
       .notNull(),
     ipAddress: text(),
     userAgent: text(),
-    userId: text()
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+    userId: int().notNull().references(() => user.id, { onDelete: "cascade" }),
   },
 );
 
 export const account = sqliteTable(
   "account",
   {
-    id: int().primaryKey({ autoIncrement: true }),
+    id: text().primaryKey().notNull(),
     accountId: text().notNull(),
     providerId: text().notNull(),
-    userId: text()
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+    userId: int().notNull().references(() => user.id, { onDelete: "cascade" }),
     accessToken: text(),
     refreshToken: text(),
     idToken: text(),
@@ -56,12 +52,12 @@ export const account = sqliteTable(
 export const verification = sqliteTable(
   "verification",
   {
-    id: int().primaryKey({ autoIncrement: true }),
+    id: text().primaryKey().notNull(),
     identifier: text().notNull(),
     value: text().notNull(),
     expiresAt: integer().notNull(),
     createdAt: integer().notNull(),
-    updatedAt: integer().notNull(),
+    updatedAt: integer().notNull()
   },
 );
 
