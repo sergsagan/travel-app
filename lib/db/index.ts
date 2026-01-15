@@ -5,7 +5,7 @@ import { getEnv } from '../env'
 import * as schema from './schema';
 
 const env = getEnv()
-// You can specify any property from the turso connection options
+
 const db = drizzle({
   connection: {
     url: env.TURSO_DATABASE_URL,
