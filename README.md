@@ -1,4 +1,4 @@
-# Travel App with Nuxt 3
+# Travel App with Nuxt 4, Vue 3, TypeScript, Drizzle, Better-Auth
 
 ## Setup
 
