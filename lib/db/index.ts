@@ -1,10 +1,10 @@
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/libsql';
 
-import { getEnv } from '../env'
+import { getEnv } from '../env';
 import * as schema from './schema';
 
-const env = getEnv()
+const env = getEnv();
 
 const db = drizzle({
   connection: {

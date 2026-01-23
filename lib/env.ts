@@ -9,14 +9,14 @@ const envSchema = z.object({
   BETTER_AUTH_SECRET: z.string(),
   BETTER_AUTH_URL: z.string(),
   AUTH_GITHUB_CLIENT_ID: z.string(),
-  AUTH_GITHUB_CLIENT_SECRET: z.string()
+  AUTH_GITHUB_CLIENT_SECRET: z.string(),
 });
 
 export type Env = z.infer<typeof envSchema>;
 
 export function getEnv(): Env {
   // eslint-disable-next-line node/no-process-env
-  const parsed = envSchema.parse(process.env)
-  tryParseEnv(envSchema, parsed)
-  return parsed
+  const parsed = envSchema.parse(process.env);
+  tryParseEnv(envSchema, parsed);
+  return parsed;
 }
