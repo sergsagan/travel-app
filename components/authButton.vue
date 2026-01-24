@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 </script>
 
 <template>
@@ -7,10 +7,10 @@ const authStore = useAuthStore()
     <div tabindex="0" role="button" class="btn m-1">
       <div v-if="authStore.user.image" class="avatar">
         <div class="w-8 rounded-full">
-          <img :src="authStore.user.image"  :alt="authStore.user.name">/>
+          <img :src="authStore.user.image" :alt="authStore.user.name">/>
         </div>
       </div>
-      {{ authStore.user.name}}
+      {{ authStore.user.name }}
     </div>
     <ul tabindex="0" class="dropdown-content menu bg-base-200 rounded-box z-10 w-46 shadow-sm">
       <li>
@@ -21,9 +21,9 @@ const authStore = useAuthStore()
       </li>
     </ul>
   </div>
-  <button v-else :disabled="authStore.loading" @click="authStore.signIn" class="btn btn-accent">
+  <button v-else :disabled="authStore.loading" class="btn btn-accent" @click="authStore.signIn">
     Sign In with
-    <span v-if="authStore.loading" class="loading loading-spinner loading-md"></span>
+    <span v-if="authStore.loading" class="loading loading-spinner loading-md" />
     <Icon v-else name="tabler:brand-github" size="24" />
   </button>
 </template>
