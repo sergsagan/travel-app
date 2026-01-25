@@ -4,8 +4,8 @@ import type { ZodType } from 'zod';
 import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
 
+import FormField from '~/components/app/formField.vue';
 import { InsertLocation } from '~/lib/db/schema';
-import FormField from "~/components/app/formField.vue";
 
 const { handleSubmit, errors } = useForm({
   validationSchema: toTypedSchema(InsertLocation as unknown as ZodType),
@@ -27,10 +27,30 @@ const onSubmit = handleSubmit((values) => {
       </p>
     </div>
     <form class="flex flex-col gap-1" @submit.prevent="onSubmit">
-      <formField label="Location Name" name="name" type="text" :error="errors.name"/>
-      <formField label="Description" name="description" type="textarea" :error="errors.description"/>
-      <formField label="Latitude" name="lat" type="number" :error="errors.lat"/>
-      <formField label="Longitude" name="long" type="number" :error="errors.long"/>
+      <FormField
+        label="Location Name"
+        name="name"
+        type="text"
+        :error="errors.name"
+      />
+      <FormField
+        label="Description"
+        name="description"
+        type="textarea"
+        :error="errors.description"
+      />
+      <FormField
+        label="Latitude"
+        name="lat"
+        type="number"
+        :error="errors.lat"
+      />
+      <FormField
+        label="Longitude"
+        name="long"
+        type="number"
+        :error="errors.long"
+      />
       <div class="flex justify-end gap-2">
         <button type="button" class="btn btn-outline min-w-27.5">
           <Icon name="tabler:arrow-left" size="24" />Cansel
