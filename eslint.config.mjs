@@ -23,6 +23,7 @@ export default withNuxt(
     },
     {
       rules: {
+        'no-alert': 'off',
         'vue/max-attributes-per-line': ['error', {
           singleline: {
             max: 3,
