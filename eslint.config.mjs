@@ -4,6 +4,7 @@ import antfu from '@antfu/eslint-config';
 import withNuxt from './.nuxt/eslint.config.mjs';
 
 export default withNuxt(
+  // @ts-ignore
   antfu(
     {
       type: 'app',
@@ -22,6 +23,15 @@ export default withNuxt(
     },
     {
       rules: {
+        'no-alert': 'off',
+        'vue/max-attributes-per-line': ['error', {
+          singleline: {
+            max: 3,
+          },
+          multiline: {
+            max: 1,
+          },
+        }],
         'ts/no-redeclare': ['off'],
         'ts/consistent-type-definitions': ['error', 'type'],
         'no-console': ['warn'],
