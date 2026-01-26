@@ -21,7 +21,7 @@ const { handleSubmit, errors, meta, setErrors } = useForm({
 const onSubmit = handleSubmit(async(values) => {
   try {
     loading.value = true;
-    await $csrfFetch('/api/locations', {
+    await $fetch('/api/locations', {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
