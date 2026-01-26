@@ -9,7 +9,7 @@
     "dev:db": "turso dev --db-file local.db",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
+    "postinstall": "nuxt prepare || true",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "nuxi typecheck",
