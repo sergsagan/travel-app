@@ -12,8 +12,7 @@
     "postinstall": "nuxt prepare || true",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typecheck": "nuxi typecheck",
-    "prepare": "husky install || true"
+    "typecheck": "nuxi typecheck"
   },
   "dependencies": {
     "@antfu/eslint-config": "^6.7.3",
