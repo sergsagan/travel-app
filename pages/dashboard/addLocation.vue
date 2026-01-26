@@ -12,7 +12,6 @@ const router = useRouter();
 const submitError = ref('');
 const loading = ref(false);
 const submitted = ref(false);
-const { $csrfFetch } = useNuxtApp();
 
 const { handleSubmit, errors, meta, setErrors } = useForm({
   validationSchema: toTypedSchema(InsertLocation as unknown as ZodType),
