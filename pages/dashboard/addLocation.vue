@@ -3,16 +3,29 @@ import type { ZodType } from 'zod';
 
 import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
-
 import FormField from '~/components/app/formField.vue';
 import { InsertLocation } from '~/lib/db/schema';
 
-const { handleSubmit, errors } = useForm({
+const router = useRouter();
+
+const { handleSubmit, errors, meta } = useForm({
   validationSchema: toTypedSchema(InsertLocation as unknown as ZodType),
 });
 
 const onSubmit = handleSubmit((values) => {
   console.log(values);
+});
+
+onBeforeRouteLeave(() => {
+  if (meta.value.dirty) {
+    const confirm = window.confirm(
+        'Are you sure you want to leave? All unsaved changes will be lost.',
+    );
+    if (!confirm) {
+      return false;
+    }
+  }
+  return true;
 });
 </script>
 
@@ -52,7 +65,7 @@ const onSubmit = handleSubmit((values) => {
         :error="errors.long"
       />
       <div class="flex justify-end gap-2">
-        <button type="button" class="btn btn-outline min-w-27.5">
+        <button type="button" class="btn btn-outline min-w-27.5" @click="router.back()">
           <Icon name="tabler:arrow-left" size="24" />Cansel
         </button>
         <button type="submit" class="btn btn-primary min-w-27.5">
