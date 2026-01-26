@@ -1,7 +1,12 @@
-import { InsertLocation } from "~/lib/db/schema";
+import { InsertLocation, location } from "~/lib/db/schema";
 import { createError } from 'h3'
+import db from "~/lib/db";
+
 
 export default defineEventHandler(async(event) => {
+    if (!event.context.user) {
+        throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+    }
     const result = await readValidatedBody(event,  InsertLocation.safeParse);
 
     if (!result.success) {
@@ -19,5 +24,11 @@ export default defineEventHandler(async(event) => {
         })
 
     }
-    return result.data
+    const [created] = await db.insert(location).values({
+        ...result.data,
+        slug: result.data.name.replaceAll(' ', '-').toLowerCase(),
+        userId: event.context.user.id,
+    }).returning();
+
+    return created
 });

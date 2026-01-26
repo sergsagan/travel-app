@@ -7,8 +7,12 @@ import FormField from '~/components/app/formField.vue';
 import { InsertLocation } from '~/lib/db/schema';
 import type { FetchError } from 'ofetch'
 
+
 const router = useRouter();
 const submitError = ref('');
+const loading = ref(false);
+const submitted = ref(false);
+const { $csrfFetch } = useNuxtApp();
 
 const { handleSubmit, errors, meta, setErrors } = useForm({
   validationSchema: toTypedSchema(InsertLocation as unknown as ZodType),
@@ -16,25 +20,28 @@ const { handleSubmit, errors, meta, setErrors } = useForm({
 
 const onSubmit = handleSubmit(async(values) => {
   try {
-    const inserted = await $fetch('/api/locations', {
+    loading.value = true;
+    await $csrfFetch('/api/locations', {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(values),
     });
-    console.log(inserted)
+    submitted.value = true;
+    navigateTo('/dashboard')
   } catch (e) {
-    const error = e as FetchError<any>;
+    const error = e as FetchError;
     if (error.data?.data) {
       setErrors(error.data?.data)
     }
     submitError.value = error.statusMessage || 'An unexpected error occurred';
   }
+  loading.value = false;
 });
 
 onBeforeRouteLeave(() => {
-  if (meta.value.dirty) {
+  if (!submitted.value && meta.value.dirty) {
     const confirm = window.confirm(
         'Are you sure you want to leave? All unsaved changes will be lost.',
     );
@@ -65,31 +72,37 @@ onBeforeRouteLeave(() => {
         name="name"
         type="text"
         :error="errors.name"
+        :disabled="loading"
       />
       <FormField
         label="Description"
         name="description"
         type="textarea"
         :error="errors.description"
+        :disabled="loading"
       />
       <FormField
         label="Latitude"
         name="lat"
         type="number"
         :error="errors.lat"
+        :disabled="loading"
       />
       <FormField
         label="Longitude"
         name="long"
         type="number"
         :error="errors.long"
+        :disabled="loading"
       />
       <div class="flex justify-end gap-2">
-        <button type="button" class="btn btn-outline min-w-27.5" @click="router.back()">
+        <button :disabled="loading" type="button" class="btn btn-outline min-w-27.5" @click="router.back()">
           <Icon name="tabler:arrow-left" size="24" />Cansel
         </button>
-        <button type="submit" class="btn btn-primary min-w-27.5">
-          Add <Icon name="tabler:circle-plus-filled" size="24" />
+        <button :disabled="loading" type="submit" class="btn btn-primary min-w-27.5">
+          Add
+          <span v-if="loading" class="loading loading-spinner loading-sm"></span>
+          <Icon v-else name="tabler:circle-plus-filled" size="24" />
         </button>
       </div>
     </form>
