@@ -2,6 +2,7 @@ import { InsertLocation, location } from "~/lib/db/schema";
 import { createError } from 'h3'
 import db from "~/lib/db";
 import { verifyCsrf } from '~/server/utils/csrf'
+import { DrizzleError } from "drizzle-orm";
 
 
 export default defineEventHandler(async(event) => {
@@ -27,11 +28,25 @@ export default defineEventHandler(async(event) => {
         })
 
     }
-    const [created] = await db.insert(location).values({
-        ...result.data,
-        slug: result.data.name.replaceAll(' ', '-').toLowerCase(),
-        userId: event.context.user.id,
-    }).returning();
 
-    return created
+    try {
+        const [created] = await db.insert(location).values({
+            ...result.data,
+            slug: result.data.name.replaceAll(' ', '-').toLowerCase(),
+            userId: event.context.user.id,
+        }).returning();
+        return created
+    } catch (e) {
+        const error = e as DrizzleError;
+        // @ts-ignore
+        const causeMessage = error.cause?.message || '';
+        if (causeMessage.includes('location.slug')) {
+            throw createError({
+                statusCode: 409,
+                statusMessage: 'Location with this name already exists',
+            });
+        }
+        throw error;
+    }
+
 });
