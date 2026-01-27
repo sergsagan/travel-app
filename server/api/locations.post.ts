@@ -1,9 +1,12 @@
 import { InsertLocation, location } from "~/lib/db/schema";
 import { createError } from 'h3'
 import db from "~/lib/db";
+import { verifyCsrf } from '~/server/utils/csrf'
 
 
 export default defineEventHandler(async(event) => {
+    verifyCsrf(event);
+
     if (!event.context.user) {
         throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
     }
