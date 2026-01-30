@@ -3,6 +3,7 @@ import { createError } from 'h3'
 import db from "~/lib/db";
 import { verifyCsrf } from '~/server/utils/csrf'
 import { DrizzleError } from "drizzle-orm";
+import slug from "slug";
 
 
 export default defineEventHandler(async(event) => {
@@ -32,7 +33,7 @@ export default defineEventHandler(async(event) => {
     try {
         const [created] = await db.insert(location).values({
             ...result.data,
-            slug: result.data.name.replaceAll(' ', '-').toLowerCase(),
+            slug: slug(result.data.name),
             userId: event.context.user.id,
         }).returning();
         return created
