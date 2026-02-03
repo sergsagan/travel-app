@@ -13,10 +13,10 @@ const submitError = ref('');
 const loading = ref(false);
 const submitted = ref(false);
 
-const csrfToken = ref<string | null>(null)
+const csrfToken = ref<string | undefined>(undefined)
 
 onMounted(async () => {
-  const { csrfToken: token } = await $fetch('/api/csrf')
+  const { token } = await $fetch('/api/csrf')
   csrfToken.value = token
 })
 
@@ -31,7 +31,9 @@ const onSubmit = handleSubmit(async(values) => {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRF-Token': csrfToken.value!,
+        ...(csrfToken.value && {
+          'x-csrf-token': csrfToken.value,
+        }),
       },
       body: JSON.stringify(values),
     });

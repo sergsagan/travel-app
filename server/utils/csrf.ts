@@ -1,5 +1,6 @@
 import {createHmac, timingSafeEqual} from 'node:crypto'
 import { getCookie, setCookie, getHeader, H3Event } from 'h3'
+
 import { Buffer } from 'buffer'
 
 const CSRF_COOKIE = 'csrf_token'
