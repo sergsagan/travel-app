@@ -28,11 +28,12 @@ const onSubmit = handleSubmit(async(values) => {
     loading.value = true;
     await $fetch('/api/locations', {
       method: 'post',
+      credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json',
-        ...(csrfToken.value && {
-          'x-csrf-token': csrfToken.value,
-        }),
+        ...(csrfToken.value
+            ? { 'x-csrf-token': csrfToken.value }
+            : {}),
       },
       body: JSON.stringify(values),
     });
