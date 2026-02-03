@@ -2,9 +2,9 @@ import { InsertLocation, location } from "~/lib/db/schema";
 import { createError } from 'h3'
 import db from "~/lib/db";
 import { verifyCsrf } from '~/server/utils/csrf'
-import { DrizzleError } from "drizzle-orm";
-import slug from "slug";
-
+import {and, DrizzleError, eq} from "drizzle-orm";
+import slugify from 'slugify'
+import { customAlphabet } from "nanoid";
 
 export default defineEventHandler(async(event) => {
     verifyCsrf(event);
@@ -27,13 +27,43 @@ export default defineEventHandler(async(event) => {
             statusMessage,
             data,
         })
+    }
+    const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 5);
+    const existingLocation = await db.query.location.findFirst({
+        where:
+            and(
+                eq(location.name, result.data.name),
+                eq(location.userId, event.context.user.id)
+            ),
+    });
 
+    if (existingLocation) {
+        throw createError({
+            statusCode: 409,
+            statusMessage: 'Location with this name already exists',
+        })
+    }
+
+    let slug  = slugify(result.data.name)
+    let existing = !!(await db.query.location.findFirst({
+        where: eq(location.slug, slug),
+    }));
+
+    while (existing) {
+        const id = nanoid();
+        const idSlug = `${slug}-${id}`;
+        existing = !!(await db.query.location.findFirst({
+            where: eq(location.slug, idSlug),
+        }));
+        if (!existing) {
+            slug = idSlug;
+        }
     }
 
     try {
         const [created] = await db.insert(location).values({
             ...result.data,
-            slug: slug(result.data.name),
+            slug,
             userId: event.context.user.id,
         }).returning();
         return created
