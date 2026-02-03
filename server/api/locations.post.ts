@@ -69,7 +69,7 @@ export default defineEventHandler(async(event) => {
         return created
     } catch (e) {
         const error = e as DrizzleError;
-        // @ts-ignore
+        // @ts-expect-error -- drizzle/libsql error typing
         const causeMessage = error.cause?.message || '';
         if (causeMessage.includes('location.slug')) {
             throw createError({
