@@ -25,4 +25,7 @@ export default defineNuxtConfig({
   colorMode: {
     dataValue: 'theme',
   },
+  runtimeConfig: {
+    csrfSecret: import.meta.env.CSRF_SECRET,
+  },
 });
