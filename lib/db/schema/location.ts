@@ -2,6 +2,7 @@ import { int, real, sqliteTable, text, unique } from 'drizzle-orm/sqlite-core';
 import { createInsertSchema } from 'drizzle-zod';
 
 import { user } from '../../db/schema/auth';
+import { z } from "zod";
 
 export const location = sqliteTable('location', {
   id: int().primaryKey({ autoIncrement: true }),
@@ -28,3 +29,6 @@ export const InsertLocation = createInsertSchema(location, {
   createdAt: true,
   updatedAt: true,
 });
+
+// @ts-expect-error -- drizzle/libsql error typing
+export type InsertLocation = z.infer<typeof InsertLocation>;
