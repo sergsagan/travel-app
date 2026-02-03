@@ -37,7 +37,9 @@ export function verifyCsrf(event: H3Event) {
     const { csrfSecret } = useRuntimeConfig()
 
     const cookieToken = getCookie(event, CSRF_COOKIE)
-    const headerToken = getHeader(event, 'x-csrf-token')
+    const headerToken =
+        getHeader(event, 'x-csrf-token') ??
+        getHeader(event, 'X-CSRF-Token')
 
     if (!cookieToken || !headerToken) {
         throw createError({ statusCode: 403, statusMessage: 'CSRF token missing' })
