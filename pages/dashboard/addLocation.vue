@@ -7,7 +7,6 @@ import FormField from '~/components/app/formField.vue';
 import { InsertLocation } from '~/lib/db/schema';
 import type { FetchError } from 'ofetch'
 
-
 const router = useRouter();
 const submitError = ref('');
 const loading = ref(false);
