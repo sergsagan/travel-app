@@ -1,10 +1,9 @@
 import { InsertLocation, location } from "~/lib/db/schema";
 import { createError } from 'h3'
-import db from "~/lib/db";
 import { verifyCsrf } from '~/server/utils/csrf'
-import {and, DrizzleError, eq} from "drizzle-orm";
+import { DrizzleError, eq } from "drizzle-orm";
 import slugify from 'slugify'
-import { customAlphabet } from "nanoid";
+import {findLocationByName, findUniqueSlug, insertLocation} from "~/lib/db/queries/location";
 
 export default defineEventHandler(async(event) => {
     verifyCsrf(event);
@@ -28,14 +27,7 @@ export default defineEventHandler(async(event) => {
             data,
         })
     }
-    const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 5);
-    const existingLocation = await db.query.location.findFirst({
-        where:
-            and(
-                eq(location.name, result.data.name),
-                eq(location.userId, event.context.user.id)
-            ),
-    });
+    const existingLocation = await findLocationByName(result.data,  event.context.user.id);
 
     if (existingLocation) {
         throw createError({
@@ -44,29 +36,10 @@ export default defineEventHandler(async(event) => {
         })
     }
 
-    let slug  = slugify(result.data.name)
-    let existing = !!(await db.query.location.findFirst({
-        where: eq(location.slug, slug),
-    }));
-
-    while (existing) {
-        const id = nanoid();
-        const idSlug = `${slug}-${id}`;
-        existing = !!(await db.query.location.findFirst({
-            where: eq(location.slug, idSlug),
-        }));
-        if (!existing) {
-            slug = idSlug;
-        }
-    }
+    const slug  = await findUniqueSlug(slugify(result.data.name));
 
     try {
-        const [created] = await db.insert(location).values({
-            ...result.data,
-            slug,
-            userId: event.context.user.id,
-        }).returning();
-        return created
+        return insertLocation(result.data, slug, event.context.user.id)
     } catch (e) {
         const error = e as DrizzleError;
         // @ts-expect-error -- drizzle/libsql error typing
