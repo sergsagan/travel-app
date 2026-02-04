@@ -26,7 +26,9 @@ export default defineNuxtConfig({
     dataValue: 'theme',
   },
   runtimeConfig: {
-    csrfSecret: '', // server-only
-    public: {},
+    csrfSecret: process.env.CSRF_SECRET, // server-only
+    public: {
+      disableAuth: process.env.NODE_ENV === 'test',
+    },
   },
 });
