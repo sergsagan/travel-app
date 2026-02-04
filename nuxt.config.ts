@@ -25,6 +25,16 @@ export default defineNuxtConfig({
   colorMode: {
     dataValue: 'theme',
   },
+  nitro: {
+    watchOptions: {
+      ignored: [
+        '**/node_modules/**',
+        '**/.git/**',
+        '**/.nuxt/**',
+        '**/local.db',
+      ],
+    },
+  },
   runtimeConfig: {
     csrfSecret: process.env.CSRF_SECRET, // server-only
     public: {
