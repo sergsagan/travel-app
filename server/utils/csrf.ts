@@ -1,9 +1,10 @@
 import {createHmac, timingSafeEqual} from 'node:crypto'
 import { getCookie, setCookie, getHeader, H3Event } from 'h3'
 
-import { Buffer } from 'buffer'
 
 const CSRF_COOKIE = 'csrf_token'
+
+const isTest = process.env.NODE_ENV === 'test'
 
 function sign(token: string, secret: string) {
     return createHmac('sha256', secret).update(token).digest('hex')
@@ -26,7 +27,7 @@ export function setCsrfCookie(event: H3Event) {
     setCookie(event, CSRF_COOKIE, token, {
         httpOnly: false,
         sameSite: 'lax',
-        secure: true,
+        secure: !isTest,
         path: '/',
     })
 
@@ -50,16 +51,19 @@ export function verifyCsrf(event: H3Event) {
     }
 
     const [raw, signature] = cookieToken.split('.')
+
     if (!raw || !signature) {
         throw createError({ statusCode: 403, statusMessage: 'Malformed CSRF token' })
     }
 
-    const expected = sign(raw, csrfSecret)
+    const expectedSignature = sign(raw, csrfSecret)
 
-    const a = Buffer.from(signature)
-    const b = Buffer.from(expected)
-
-    if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    if (
+        !timingSafeEqual(
+            Buffer.from(signature),
+            Buffer.from(expectedSignature)
+        )
+    ) {
         throw createError({ statusCode: 403, statusMessage: 'Invalid CSRF token' })
     }
 }

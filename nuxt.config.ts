@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from '@tailwindcss/vite';
-
+import process from 'node:process'
 import './lib/env';
 
 export default defineNuxtConfig({
@@ -25,8 +25,20 @@ export default defineNuxtConfig({
   colorMode: {
     dataValue: 'theme',
   },
+  nitro: {
+    watchOptions: {
+      ignored: [
+        '**/node_modules/**',
+        '**/.git/**',
+        '**/.nuxt/**',
+        '**/local.db',
+      ],
+    },
+  },
   runtimeConfig: {
-    csrfSecret: '', // server-only
-    public: {},
+    csrfSecret: process.env.CSRF_SECRET, // server-only
+    public: {
+      disableAuth: process.env.NODE_ENV === 'test',
+    },
   },
 });
