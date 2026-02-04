@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from '@tailwindcss/vite';
-
+import process from 'node:process'
 import './lib/env';
 
 export default defineNuxtConfig({

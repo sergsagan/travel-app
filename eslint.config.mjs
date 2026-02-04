@@ -54,7 +54,7 @@ export default withNuxt(
 
         // 🔹 nuxt.config.ts (process.env дозволений)
         {
-            files: ['nuxt.config.ts'],
+            files: ['nuxt.config.ts', 'lib/**/*.{ts,js}'],
             rules: {
                 'node/no-process-env': 'off',
             },
