@@ -1,6 +1,6 @@
 import { InsertLocation } from "~/lib/db/schema";
 import { createError } from 'h3'
-import { DrizzleError, eq } from "drizzle-orm";
+import { DrizzleError } from "drizzle-orm";
 import slugify from 'slugify'
 import { findLocationByName, findUniqueSlug, insertLocation } from "~/lib/db/queries/location";
 import defineAuthenticatedEventHandler from "~/utils/defineAuthenticatedEventHandler";
