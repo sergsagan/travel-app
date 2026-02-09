@@ -9,8 +9,8 @@ type AuthenticatedEvent = H3Event & {
     }
 }
 
-export default function defineAuthenticatedEventHandler(
-    handler: (event: AuthenticatedEvent) => any) {
+export default function defineAuthenticatedEventHandler<T>(
+    handler: (event: AuthenticatedEvent) => T) {
     return defineEventHandler(async(event) => {
         if (!['GET', 'HEAD', 'OPTIONS'].includes(event.method)) {
             verifyCsrf(event)
