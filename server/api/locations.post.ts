@@ -1,16 +1,11 @@
-import { InsertLocation, location } from "~/lib/db/schema";
+import { InsertLocation } from "~/lib/db/schema";
 import { createError } from 'h3'
-import { verifyCsrf } from '~/server/utils/csrf'
 import { DrizzleError, eq } from "drizzle-orm";
 import slugify from 'slugify'
-import {findLocationByName, findUniqueSlug, insertLocation} from "~/lib/db/queries/location";
+import { findLocationByName, findUniqueSlug, insertLocation } from "~/lib/db/queries/location";
+import defineAuthenticatedEventHandler from "~/utils/defineAuthenticatedEventHandler";
 
-export default defineEventHandler(async(event) => {
-    verifyCsrf(event);
-
-    if (!event.context.user) {
-        throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
-    }
+export default defineAuthenticatedEventHandler(async(event) => {
     const result = await readValidatedBody(event,  InsertLocation.safeParse);
 
     if (!result.success) {
