@@ -1,23 +1,23 @@
-import {createHmac, timingSafeEqual} from 'node:crypto'
-import { getCookie, setCookie, getHeader, H3Event } from 'h3'
-
+import { createHmac, timingSafeEqual, randomUUID } from 'node:crypto'
+import { Buffer } from 'node:buffer'
+import { getCookie, setCookie, getHeader, H3Event, createError } from 'h3'
 
 const CSRF_COOKIE = 'csrf_token'
-
-const isTest = process.env.NODE_ENV === 'test'
+const isTest = import.meta.env.NODE_ENV === 'test'
 
 function sign(token: string, secret: string) {
     return createHmac('sha256', secret).update(token).digest('hex')
 }
 
 export function generateCsrfToken(secret: string) {
-    const raw = crypto.randomUUID()
+    const raw = randomUUID()
     const signature = sign(raw, secret)
     return `${raw}.${signature}`
 }
 
 export function setCsrfCookie(event: H3Event) {
     const { csrfSecret } = useRuntimeConfig()
+
     if (!csrfSecret) {
         throw new Error('CSRF_SECRET is missing')
     }

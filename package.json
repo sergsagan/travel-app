@@ -12,7 +12,10 @@
     "postinstall": "nuxt prepare || true",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typecheck": "nuxi typecheck"
+    "typecheck": "nuxi typecheck",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:one": "vitest run -t"
   },
   "dependencies": {
     "@antfu/eslint-config": "^6.7.3",

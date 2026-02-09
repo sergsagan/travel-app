@@ -8,6 +8,12 @@ import { customAlphabet } from "nanoid";
 type Location = InferSelectModel<typeof location>
 const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 5);
 
+export async function findLocations(userId: number) {
+    return db.query.location.findMany({
+        where: eq(location.userId, userId),
+    });
+}
+
 export async function findLocationByName(existing: InsertLocation, userId: number) {
     return db.query.location.findFirst({
         where: and(
