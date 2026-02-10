@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import SidebarButton from "~/components/sidebarButton.vue";
+
+const sidebarStore = useSidebarStore();
 const isSidebarOpen = ref(true);
 
 onMounted(() => {
@@ -19,20 +22,29 @@ function toggleSidebar() {
         <Icon v-else name="tabler:square-chevron-right" size="24" />
       </div>
       <div class="flex flex-col">
-        <SidebarItem
+        <SidebarButton
           :show-label="isSidebarOpen"
           href="/dashboard"
           label="Locations"
           icon="tabler:map-2"
         />
-        <SidebarItem
+        <SidebarButton
           :show-label="isSidebarOpen"
           href="/dashboard/addLocation"
           label="Add Location"
           icon="tabler:circle-plus-filled"
         />
         <div class="divider" />
-        <SidebarItem
+        <SidebarButton
+          v-for="item in sidebarStore.sidebarItems"
+          :label="item.label"
+          :icon="item.icon"
+          :href="item.href"
+          :key="item.id"
+          :show-label="isSidebarOpen"
+        />
+        <div class="divider" />
+        <SidebarButton
           :show-label="isSidebarOpen"
           href="/signOut"
           label="Sign Out"
