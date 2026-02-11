@@ -65,9 +65,9 @@ onBeforeRouteLeave(() => {
 <template>
   <div class="container max-w-md mx-auto">
     <div class="my-4">
-      <h1 class="text-lg">
+      <h2 class="text-2xl">
         Add Location
-      </h1>
+      </h2>
       <p class="text-sm">
         A location is a place you have traveled or will travel to. It can be a city, country, state or point of interest. You can add specific times you visited this location after adding it.
       </p>

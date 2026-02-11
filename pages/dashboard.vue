@@ -34,16 +34,21 @@ function toggleSidebar() {
           label="Add Location"
           icon="tabler:circle-plus-filled"
         />
-        <div class="divider" />
-        <SidebarButton
-          v-for="item in sidebarStore.sidebarItems"
-          :label="item.label"
-          :icon="item.icon"
-          :href="item.href"
-          :key="item.id"
-          :show-label="isSidebarOpen"
-        />
-        <div class="divider" />
+        <div class="divider"/>
+        <div v-if="sidebarStore.loading" class="px-4">
+          <div class="skeleton h-4 w-full"/>
+        </div>
+        <div v-else class="flex flex-col">
+          <SidebarButton
+              v-for="item in sidebarStore.sidebarItems"
+              :label="item.label"
+              :icon="item.icon"
+              :href="item.href"
+              :key="item.id"
+              :show-label="isSidebarOpen"
+          />
+        </div>
+        <div class="divider"></div>
         <SidebarButton
           :show-label="isSidebarOpen"
           href="/signOut"
