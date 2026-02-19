@@ -2,13 +2,18 @@
 import SidebarButton from "~/components/sidebarButton.vue";
 
 const isSidebarOpen = ref(true);
+const ready = ref(false)
 const route = useRoute();
 const sidebarStore = useSidebarStore();
 const locationsStore = useLocationStore();
 
 onMounted(() => {
-  isSidebarOpen.value = localStorage.getItem('isSidebarOpen') === 'true';
-  console.log('route.path', route.path)
+  const saved = localStorage.getItem('isSidebarOpen')
+  if (saved !== null) {
+    isSidebarOpen.value = saved === 'true'
+  }
+  ready.value = true
+
   if (route.path !== '/dashboard') {
     locationsStore.refresh();
   }
@@ -21,7 +26,7 @@ function toggleSidebar() {
 </script>
 
 <template>
-  <div class="flex flex-1">
+  <div v-if="ready" class="flex flex-1">
     <div class="bg-base-100 transition-all duration-300" :class="{ 'w-64': isSidebarOpen, 'w-16': !isSidebarOpen }">
       <div class="flex p-2 hover:cursor-pointer" :class="{ 'justify-center': !isSidebarOpen, 'justify-end': isSidebarOpen }" @click="toggleSidebar">
         <Icon v-if="isSidebarOpen" name="tabler:square-chevron-left" size="24" />

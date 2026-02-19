@@ -11,7 +11,9 @@
     </div>
     <div class="navbar-end">
       <AppThemeToggle />
-      <AuthButton />
+      <ClientOnly>
+        <AuthButton />
+      </ClientOnly>
     </div>
   </div>
 </template>
