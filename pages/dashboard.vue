@@ -1,8 +1,17 @@
 <script setup lang="ts">
+import SidebarButton from "~/components/sidebarButton.vue";
+
 const isSidebarOpen = ref(true);
+const route = useRoute();
+const sidebarStore = useSidebarStore();
+const locationsStore = useLocationStore();
 
 onMounted(() => {
   isSidebarOpen.value = localStorage.getItem('isSidebarOpen') === 'true';
+  console.log('route.path', route.path)
+  if (route.path !== '/dashboard') {
+    locationsStore.refresh();
+  }
 });
 
 function toggleSidebar() {
@@ -19,20 +28,34 @@ function toggleSidebar() {
         <Icon v-else name="tabler:square-chevron-right" size="24" />
       </div>
       <div class="flex flex-col">
-        <SidebarItem
+        <SidebarButton
           :show-label="isSidebarOpen"
           href="/dashboard"
           label="Locations"
           icon="tabler:map-2"
         />
-        <SidebarItem
+        <SidebarButton
           :show-label="isSidebarOpen"
           href="/dashboard/addLocation"
           label="Add Location"
           icon="tabler:circle-plus-filled"
         />
-        <div class="divider" />
-        <SidebarItem
+        <div v-if="sidebarStore.loading || sidebarStore.sidebarItems.length" class="divider"/>
+        <div v-if="sidebarStore.loading" class="px-4">
+          <div class="skeleton h-4 w-full"/>
+        </div>
+        <div v-if="!sidebarStore.loading && sidebarStore.sidebarItems.length" class="flex flex-col">
+          <SidebarButton
+              v-for="item in sidebarStore.sidebarItems"
+              :label="item.label"
+              :icon="item.icon"
+              :href="item.href"
+              :key="item.id"
+              :show-label="isSidebarOpen"
+          />
+        </div>
+        <div class="divider"></div>
+        <SidebarButton
           :show-label="isSidebarOpen"
           href="/signOut"
           label="Sign Out"
