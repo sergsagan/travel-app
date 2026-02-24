@@ -1,6 +1,7 @@
 <script setup lang="ts">
-const style = 'https://demotiles.maplibre.org/style.json';
-const center = [-1.559482, 47.21322];
+//const style = 'https://tiles.openfreemap.org/styles/liberty';
+const style = '/styles/dark.json';
+const center = [43.30, 16.26];
 const zoom = 8;
 </script>
 
