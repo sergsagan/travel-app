@@ -5,13 +5,14 @@ import './lib/env';
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   modules: [
     '@nuxt/eslint',
     '@nuxt/icon',
     '@nuxtjs/color-mode',
     '@pinia/nuxt',
     '@vee-validate/nuxt',
+    'nuxt-maplibre',
   ],
   css: ['~/assets/css/main.css'],
   eslint: {
@@ -36,7 +37,7 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
-    csrfSecret: process.env.CSRF_SECRET, // server-only
+    csrfSecret: process.env.CSRF_SECRET,
     public: {
       disableAuth: process.env.NODE_ENV === 'test',
     },
