@@ -1,14 +1,18 @@
 <script setup lang="ts">
-//const style = 'https://tiles.openfreemap.org/styles/liberty';
-const style = '/styles/dark.json';
-const center = [43.30, 16.26];
-const zoom = 8;
+import { CENTER_EUROPE } from "~/lib/constants";
+
+const colorMode = useColorMode();
+const style = computed(() =>
+    colorMode.value === 'dark'
+        ? '/styles/dark.json'
+        : 'https://tiles.openfreemap.org/styles/liberty');
+const zoom = 3;
 </script>
 
 <template>
   <MglMap
       :map-style="style"
-      :center="center"
+      :center="CENTER_EUROPE"
       :zoom="zoom"
   >
     <MglNavigationControl />
