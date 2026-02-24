@@ -1,1 +1,1 @@
-export const CENTER_EUROPE = [21.22574, 48.23610];
+export const CENTER_EUROPE: [number, number] = [21.22574, 48.23610];
