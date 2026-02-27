@@ -1,6 +1,6 @@
-/* eslint-disable node/no-process-env */
 import type { ZodObject, ZodRawShape } from 'zod';
-import process from 'node:process'
+
+import process from 'node:process';
 import { ZodError } from 'zod';
 
 export default function tryParseEnv<T extends ZodRawShape>(
@@ -14,7 +14,6 @@ export default function tryParseEnv<T extends ZodRawShape>(
     if (error instanceof ZodError) {
       let message = 'Missing required values in .env:\n';
       error.issues.forEach((issue) => {
-
         message += `${issue.path[0]}\n`;
       });
       const e = new Error(message);

@@ -1,5 +1,6 @@
-import { betterAuth } from 'better-auth';
 import type { User } from 'better-auth';
+
+import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { createAuthMiddleware } from 'better-auth/plugins';
 
