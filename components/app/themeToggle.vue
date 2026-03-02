@@ -10,8 +10,8 @@ const isDark = computed({
 </script>
 
 <template>
-  <label class="swap swap-rotate mx-4">
-    <input v-model="isDark" type="checkbox">
+  <label for="check" class="swap swap-rotate mx-4">
+    <input v-model="isDark" type="checkbox" id="check">
 
     <Icon
       class="swap-on"

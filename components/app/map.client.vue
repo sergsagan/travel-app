@@ -10,6 +10,10 @@ const style = computed(() =>
     ? '/styles/dark.json'
     : 'https://tiles.openfreemap.org/styles/liberty');
 const zoom = 3;
+
+onMounted(() => {
+  mapStore.init()
+})
 </script>
 
 <template>
