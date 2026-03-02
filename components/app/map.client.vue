@@ -36,6 +36,12 @@ onMounted(() => {
               class="text-primary drop-shadow-lg hover:scale-110 transition-transform"/>
         </div>
       </template>
+      <MglPopup>
+        <h3 class="text-xl">{{ point.label }}</h3>
+        <p v-if="point.description">{{ point.description }}</p>
+        <p>long: {{ point.long }}</p>
+        <p>lat: {{ point.lat }}</p>
+      </MglPopup>
     </MglMarker>
   </MglMap>
 </template>
