@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import SidebarButton from "~/components/sidebarButton.vue";
+import SidebarButton from '~/components/sidebarButton.vue';
 
 const isSidebarOpen = ref(true);
-const ready = ref(false)
+const ready = ref(false);
 const route = useRoute();
 const sidebarStore = useSidebarStore();
 const locationsStore = useLocationStore();
 
 onMounted(() => {
-  const saved = localStorage.getItem('isSidebarOpen')
+  const saved = localStorage.getItem('isSidebarOpen');
   if (saved !== null) {
-    isSidebarOpen.value = saved === 'true'
+    isSidebarOpen.value = saved === 'true';
   }
-  ready.value = true
+  ready.value = true;
 
   if (route.path !== '/dashboard') {
     locationsStore.refresh();
@@ -27,10 +27,22 @@ function toggleSidebar() {
 
 <template>
   <div v-if="ready" class="flex flex-1">
-    <div class="bg-base-100 transition-all duration-300" :class="{ 'w-64': isSidebarOpen, 'w-16': !isSidebarOpen }">
-      <div class="flex p-2 hover:cursor-pointer" :class="{ 'justify-center': !isSidebarOpen, 'justify-end': isSidebarOpen }" @click="toggleSidebar">
-        <Icon v-if="isSidebarOpen" name="tabler:square-chevron-left" size="24" />
-        <Icon v-else name="tabler:square-chevron-right" size="24" />
+    <div class="bg-base-100 transition-all duration-300 shrink-0" :class="{ 'w-64': isSidebarOpen, 'w-16': !isSidebarOpen }">
+      <div
+        class="flex p-2 hover:cursor-pointer"
+        :class="{ 'justify-center': !isSidebarOpen, 'justify-end': isSidebarOpen }"
+        @click="toggleSidebar"
+      >
+        <Icon
+          v-if="isSidebarOpen"
+          name="tabler:square-chevron-left"
+          size="24"
+        />
+        <Icon
+          v-else
+          name="tabler:square-chevron-right"
+          size="24"
+        />
       </div>
       <div class="flex flex-col">
         <SidebarButton
@@ -45,21 +57,21 @@ function toggleSidebar() {
           label="Add Location"
           icon="tabler:circle-plus-filled"
         />
-        <div v-if="sidebarStore.loading || sidebarStore.sidebarItems.length" class="divider"/>
+        <div v-if="sidebarStore.loading || sidebarStore.sidebarItems.length" class="divider" />
         <div v-if="sidebarStore.loading" class="px-4">
-          <div class="skeleton h-4 w-full"/>
+          <div class="skeleton h-4 w-full" />
         </div>
         <div v-if="!sidebarStore.loading && sidebarStore.sidebarItems.length" class="flex flex-col">
           <SidebarButton
-              v-for="item in sidebarStore.sidebarItems"
-              :label="item.label"
-              :icon="item.icon"
-              :href="item.href"
-              :key="item.id"
-              :show-label="isSidebarOpen"
+            v-for="item in sidebarStore.sidebarItems"
+            :key="item.id"
+            :label="item.label"
+            :icon="item.icon"
+            :href="item.href"
+            :show-label="isSidebarOpen"
           />
         </div>
-        <div class="divider"></div>
+        <div class="divider" />
         <SidebarButton
           :show-label="isSidebarOpen"
           href="/signOut"
@@ -68,9 +80,13 @@ function toggleSidebar() {
         />
       </div>
     </div>
-    <div class="flex flex-1 flex-col">
-      <NuxtPage />
-      <AppMap class="flex-1" />
+    <div class="flex-1 overflow-auto">
+      <div class="flex flex-col size-full">
+        <NuxtPage />
+        <div class="flex-1">
+          <AppMap />
+        </div>
+      </div>
     </div>
   </div>
 </template>

@@ -1,5 +1,6 @@
+import process from 'node:process';
 import { z } from 'zod';
-import process from 'node:process'
+
 import tryParseEnv from './tryParseEnv';
 
 const envSchema = z.object({
@@ -15,7 +16,6 @@ const envSchema = z.object({
 export type Env = z.infer<typeof envSchema>;
 
 export function getEnv(): Env {
-  // eslint-disable-next-line node/no-process-env
   const parsed = envSchema.parse(process.env);
   tryParseEnv(envSchema, parsed);
   return parsed;

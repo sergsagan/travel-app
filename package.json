@@ -1,7 +1,7 @@
 {
   "name": "travel-app",
-  "version": "0.1.0",
   "type": "module",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "build": "nuxt build",
@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@antfu/eslint-config": "^6.7.3",
+    "@indoorequal/vue-maplibre-gl": "^8.4.2",
     "@libsql/client": "^0.17.0",
     "@nuxt/eslint": "^1.12.1",
     "@nuxt/icon": "^2.2.0",

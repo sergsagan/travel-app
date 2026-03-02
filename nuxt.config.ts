@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from '@tailwindcss/vite';
-import process from 'node:process'
+import process from 'node:process';
+
 import './lib/env';
 
 export default defineNuxtConfig({
@@ -24,7 +25,7 @@ export default defineNuxtConfig({
     plugins: [tailwindcss() as any],
     optimizeDeps: {
       include: ['maplibre-gl'],
-    }
+    },
   },
   colorMode: {
     dataValue: 'theme',

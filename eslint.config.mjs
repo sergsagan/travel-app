@@ -1,83 +1,84 @@
 // @ts-check
-import antfu from '@antfu/eslint-config'
-import withNuxt from './.nuxt/eslint.config.mjs'
+import antfu from '@antfu/eslint-config';
+
+import withNuxt from './.nuxt/eslint.config.mjs';
 
 export default withNuxt(
-    // @ts-ignore
-    antfu(
-        {
-            type: 'app',
-            vue: true,
-            typescript: true,
-            ignores: [
-                '**/.github/workflows/**',
-                '**/migrations/*',
-            ],
-            formatters: true,
-            stylistic: {
-                indent: 2,
-                semi: true,
-                quotes: 'single',
-            },
-        },
+  // @ts-ignore
+  antfu(
+    {
+      type: 'app',
+      vue: true,
+      typescript: true,
+      ignores: [
+        '**/.github/workflows/**',
+        '**/migrations/*',
+      ],
+      formatters: true,
+      stylistic: {
+        indent: 2,
+        semi: true,
+        quotes: 'single',
+      },
+    },
 
-        // 🔹 Global rules
-        {
-            rules: {
-                'no-alert': 'off',
-                'vue/max-attributes-per-line': ['error', {
-                    singleline: { max: 3 },
-                    multiline: { max: 1 },
-                }],
-                'ts/no-redeclare': 'off',
-                'ts/consistent-type-definitions': ['error', 'type'],
-                'no-console': 'warn',
-                'antfu/no-top-level-await': 'off',
+    // 🔹 Global rules
+    {
+      rules: {
+        'no-alert': 'off',
+        'vue/max-attributes-per-line': ['error', {
+          singleline: { max: 2 },
+          multiline: { max: 1 },
+        }],
+        'ts/no-redeclare': 'off',
+        'ts/consistent-type-definitions': ['error', 'type'],
+        'no-console': 'warn',
+        'antfu/no-top-level-await': 'off',
 
-                // ❗ суворо забороняємо process.env за замовчуванням
-                'node/no-process-env': 'error',
+        // ❗ суворо забороняємо process.env за замовчуванням
+        'node/no-process-env': 'error',
 
-                'perfectionist/sort-imports': [
-                    'error',
-                    { tsconfigRootDir: '.' },
-                ],
+        'perfectionist/sort-imports': [
+          'error',
+          { tsconfigRootDir: '.' },
+        ],
 
-                'unicorn/filename-case': [
-                    'error',
-                    {
-                        case: 'camelCase',
-                        ignore: ['README.md'],
-                    },
-                ],
-            },
-        },
+        'unicorn/filename-case': [
+          'error',
+          {
+            case: 'camelCase',
+            ignore: ['README.md'],
+          },
+        ],
+      },
+    },
 
-        // 🔹 nuxt.config.ts (process.env дозволений)
-        {
-            files: ['nuxt.config.ts', 'lib/**/*.{ts,js}'],
-            rules: {
-                'node/no-process-env': 'off',
-            },
-        },
+    // 🔹 nuxt.config.ts (process.env дозволений)
+    {
+      files: ['nuxt.config.ts', 'lib/**/*.{ts,js}'],
+      rules: {
+        'node/no-process-env': 'off',
+      },
+    },
 
-        // 🔹 Server-side (Node environment)
-        {
-            files: ['server/**/*.{ts,js}'],
-            rules: {
-                'node/no-process-env': 'off',
-                'node/prefer-global/buffer': 'off',
-                'node/prefer-global/process': 'off',
-            },
-        },
+    // 🔹 Server-side (Node environment)
+    {
+      files: ['server/**/*.{ts,js}'],
+      rules: {
+        'node/no-process-env': 'off',
+        'node/prefer-global/buffer': 'off',
+        'node/prefer-global/process': 'off',
+      },
+    },
 
-        // 🔹 Tests (Vitest / Node)
-        {
-            files: ['tests/**/*.{ts,js}'],
-            rules: {
-                'node/no-process-env': 'off',
-                'node/prefer-global/process': 'off',
-                'ts/ban-ts-comment': 'off',
-            },
-        },
-    ),
-)
+    // 🔹 Tests (Vitest / Node)
+    {
+      files: ['tests/**/*.{ts,js}'],
+      rules: {
+        'node/no-process-env': 'off',
+        'node/prefer-global/process': 'off',
+        'ts/ban-ts-comment': 'off',
+      },
+    },
+  ),
+);
