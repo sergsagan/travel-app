@@ -1,3 +1,4 @@
+import type { LngLatBounds } from "maplibre-gl";
 import type { MapPoint } from '~/lib/types';
 
 export const useMapStore = defineStore('useMapStore', () => {
@@ -8,11 +9,21 @@ export const useMapStore = defineStore('useMapStore', () => {
       mapPoints.value.find(p => p.id === selectedPointId.value) ?? null
   )
 
+  const shouldFlyTo= ref(true);
+
+  function selectedPointWithFlyTo(point: MapPoint | null) {
+    shouldFlyTo.value = false;
+    selectedPointId.value = point?.id ?? null;
+  }
+
   async function init() {
     const { LngLatBounds } = await import("maplibre-gl");
     const { useMap } = await import("@indoorequal/vue-maplibre-gl");
 
     const map = useMap();
+
+    let bounds: LngLatBounds | null = null;
+    const padding = 60;
 
     effect(() => {
       const firstPoint = mapPoints.value[0];
@@ -20,19 +31,33 @@ export const useMapStore = defineStore('useMapStore', () => {
       if (!firstPoint) {
         return;
       }
-      const bounds = mapPoints.value.reduce((bounds, point) => {
+      bounds = mapPoints.value.reduce((bounds, point) => {
         return bounds.extend([point.long, point.lat]);
       },new LngLatBounds([firstPoint.long, firstPoint.lat], [firstPoint.long, firstPoint.lat]));
+    })
 
-      map.map?.fitBounds(bounds, {
-        padding: 50,
-      });
+    effect(() => {
+        if (selectedPoint.value) {
+          if (shouldFlyTo.value) {
+            map.map?.flyTo({
+              center: [selectedPoint.value.long, selectedPoint.value.lat],
+              zoom: 6,
+              speed: 0.5
+            })
+          }
+          shouldFlyTo.value = true;
+        } else if (bounds) {
+          map.map?.fitBounds(bounds, {
+            padding,
+          });
+        }
     })
   }
   return {
     init,
     mapPoints,
     selectedPoint,
-    selectedPointId
+    selectedPointId,
+    selectedPointWithFlyTo,
   };
 });

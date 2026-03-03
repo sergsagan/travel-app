@@ -30,15 +30,18 @@ onMounted(() => {
     >
       <template #marker>
         <div
-            @mouseenter="mapStore.selectedPointId = point.id"
-            @mouseleave="mapStore.selectedPointId = null"
+            @mouseenter="mapStore.selectedPointWithFlyTo(point)"
+            @mouseleave="mapStore.selectedPointWithFlyTo(null)"
             class="tooltip tooltip-top hover:cursor-pointer"
+            :class="{
+              'tooltip-open': mapStore.selectedPointId === point.id
+            }"
             :data-tip="point.name"
         >
           <Icon
               name="tabler:map-pin-filled"
               size="30"
-              class="drop-shadow-lg hover:scale-110 transition-transform"
+              class="drop-shadow-lg hover:scale-120 transition-transform"
               :class="mapStore.selectedPointId === point.id ? 'text-primary' : 'text-secondary'" />
         </div>
       </template>
