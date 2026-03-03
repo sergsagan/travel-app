@@ -29,15 +29,21 @@ onMounted(() => {
       :coordinates="[point.long, point.lat]"
     >
       <template #marker>
-        <div class="tooltip tooltip-top" :data-tip="point.label">
+        <div
+            @mouseenter="mapStore.selectedPointId = point.id"
+            @mouseleave="mapStore.selectedPointId = null"
+            class="tooltip tooltip-top hover:cursor-pointer"
+            :data-tip="point.name"
+        >
           <Icon
               name="tabler:map-pin-filled"
               size="30"
-              class="text-primary drop-shadow-lg hover:scale-110 transition-transform"/>
+              class="drop-shadow-lg hover:scale-110 transition-transform"
+              :class="mapStore.selectedPointId === point.id ? 'text-primary' : 'text-secondary'" />
         </div>
       </template>
       <MglPopup>
-        <h3 class="text-xl">{{ point.label }}</h3>
+        <h3 class="text-xl">{{ point.name }}</h3>
         <p v-if="point.description">{{ point.description }}</p>
         <p>long: {{ point.long }}</p>
         <p>lat: {{ point.lat }}</p>
