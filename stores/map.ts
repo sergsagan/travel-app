@@ -2,6 +2,11 @@ import type { MapPoint } from '~/lib/types';
 
 export const useMapStore = defineStore('useMapStore', () => {
   const mapPoints = ref<MapPoint[]>([]);
+  const selectedPointId = ref<number | null>(null);
+
+  const selectedPoint = computed(() =>
+      mapPoints.value.find(p => p.id === selectedPointId.value) ?? null
+  )
 
   async function init() {
     const { LngLatBounds } = await import("maplibre-gl");
@@ -27,5 +32,7 @@ export const useMapStore = defineStore('useMapStore', () => {
   return {
     init,
     mapPoints,
+    selectedPoint,
+    selectedPointId
   };
 });
