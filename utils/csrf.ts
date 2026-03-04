@@ -5,7 +5,7 @@ import { Buffer } from 'node:buffer';
 import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 
 const CSRF_COOKIE = 'csrf_token';
-const isTest = import.meta.env.NODE_ENV === 'test';
+const isTest = process.env.NODE_ENV === 'test';
 
 function sign(token: string, secret: string) {
   return createHmac('sha256', secret).update(token).digest('hex');
