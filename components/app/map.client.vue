@@ -60,8 +60,7 @@ onMounted(() => {
       <MglPopup>
         <h3 class="text-xl">{{ point.name }}</h3>
         <p v-if="point.description">{{ point.description }}</p>
-        <p>long: {{ formatNumber(point.long) }}</p>
-        <p>lat: {{ formatNumber(point.lat) }}</p>
+        <p>coordinates: <br/> long: {{ formatNumber(point.long) }}, lat: {{ formatNumber(point.lat) }}</p>
       </MglPopup>
     </MglMarker>
     <MglMarker
