@@ -8,6 +8,7 @@ import { useForm } from 'vee-validate';
 import FormField from '~/components/app/formField.vue';
 import { InsertLocation } from '~/lib/db/schema';
 import { CENTER_EUROPE } from "~/lib/constants";
+import { formatNumber } from "~/utils/formatNumber";
 
 const router = useRouter();
 const mapStore = useMapStore();
@@ -52,10 +53,6 @@ const onSubmit = handleSubmit(async (values) => {
   }
   loading.value = false;
 });
-
-function formatNumber(value?: number | null) {
-  return value?.toFixed(5) ?? '0.00000';
-}
 
 effect(() => {
   if (mapStore.newPoint) {
