@@ -53,8 +53,8 @@ const onSubmit = handleSubmit(async (values) => {
   loading.value = false;
 });
 
-function formatNumber(value: number) {
-  return value.toFixed(5);
+function formatNumber(value?: number | null) {
+  return value?.toFixed(5) ?? '0.00000';
 }
 
 effect(() => {
