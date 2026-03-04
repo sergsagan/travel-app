@@ -7,8 +7,10 @@ import { useForm } from 'vee-validate';
 
 import FormField from '~/components/app/formField.vue';
 import { InsertLocation } from '~/lib/db/schema';
+import { CENTER_EUROPE } from "~/lib/constants";
 
 const router = useRouter();
+const mapStore = useMapStore();
 const submitError = ref('');
 const loading = ref(false);
 const submitted = ref(false);
@@ -20,7 +22,7 @@ onMounted(async () => {
   csrfToken.value = token;
 });
 
-const { handleSubmit, errors, meta, setErrors } = useForm({
+const { handleSubmit, errors, meta, setErrors, setFieldValue, controlledValues } = useForm({
   validationSchema: toTypedSchema(InsertLocation as unknown as ZodType),
 });
 
@@ -51,6 +53,27 @@ const onSubmit = handleSubmit(async (values) => {
   loading.value = false;
 });
 
+function formatNumber(value: number) {
+  return value.toFixed(5);
+}
+
+effect(() => {
+  if (mapStore.newPoint) {
+    setFieldValue('long', mapStore.newPoint.long);
+    setFieldValue('lat', mapStore.newPoint.lat);
+  }
+})
+
+onMounted(() => {
+  mapStore.newPoint = {
+    id: 1,
+    name: 'New Point',
+    description: '',
+    long: CENTER_EUROPE[0],
+    lat: CENTER_EUROPE[1],
+  }
+});
+
 onBeforeRouteLeave(() => {
   if (!submitted.value && meta.value.dirty) {
     const confirm = window.confirm(
@@ -60,12 +83,13 @@ onBeforeRouteLeave(() => {
       return false;
     }
   }
+  mapStore.newPoint = null;
   return true;
 });
 </script>
 
 <template>
-  <div class="container max-w-md mx-auto">
+  <div class="container max-w-md mx-auto p-4">
     <div class="my-4">
       <h2 class="text-2xl">
         Add Location
@@ -96,20 +120,10 @@ onBeforeRouteLeave(() => {
         :error="errors.description"
         :disabled="loading"
       />
-      <FormField
-        label="Latitude"
-        name="lat"
-        type="number"
-        :error="errors.lat"
-        :disabled="loading"
-      />
-      <FormField
-        label="Longitude"
-        name="long"
-        type="number"
-        :error="errors.long"
-        :disabled="loading"
-      />
+      <p>Drag the <Icon name="tabler:map-pin" class="text-warning" /> marker to your desired location</p>
+      <p class="text-xs text-gray-400">
+        Current location: {{ formatNumber(controlledValues.lat) }}, {{ formatNumber(controlledValues.long) }}
+      </p>
       <div class="flex justify-end gap-2">
         <button
           :disabled="loading"
