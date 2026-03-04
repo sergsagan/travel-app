@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { CENTER_EUROPE } from '~/lib/constants';
 import { useMapStore } from '~/stores/map';
+import type {LngLat} from "maplibre-gl";
 
 const mapStore = useMapStore();
 const colorMode = useColorMode();
@@ -10,6 +11,13 @@ const style = computed(() =>
     ? '/styles/dark.json'
     : 'https://tiles.openfreemap.org/styles/liberty');
 const zoom = 3;
+
+function updateNewPoint(location: LngLat) {
+  if (mapStore.newPoint) {
+    mapStore.newPoint.lat = location.lat;
+    mapStore.newPoint.long = location.lng;
+  }
+}
 
 onMounted(() => {
   mapStore.init()
@@ -42,7 +50,8 @@ onMounted(() => {
               name="tabler:map-pin-filled"
               size="30"
               class="drop-shadow-lg hover:scale-120 transition-transform"
-              :class="mapStore.selectedPointId === point.id ? 'text-primary' : 'text-secondary'" />
+              :class="mapStore.selectedPointId === point.id ? 'text-primary' : 'text-secondary'"
+          />
         </div>
       </template>
       <MglPopup>
@@ -51,6 +60,22 @@ onMounted(() => {
         <p>long: {{ point.long }}</p>
         <p>lat: {{ point.lat }}</p>
       </MglPopup>
+    </MglMarker>
+    <MglMarker
+        draggable
+        :coordinates="CENTER_EUROPE"
+        v-if="mapStore.newPoint"
+        @update:coordinates="updateNewPoint"
+    >
+      <template #marker>
+        <div class="tooltip tooltip-top hover:cursor-pointer" data-tip="Drag to your desired location">
+          <Icon
+              name="tabler:map-pin-filled"
+              size="35"
+              class="drop-shadow-lg hover:scale-120 transition-transform text-warning"
+          />
+        </div>
+      </template>
     </MglMarker>
   </MglMap>
 </template>

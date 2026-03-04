@@ -1,9 +1,6 @@
 import type { H3Event } from 'h3';
-
 import { createError } from 'h3';
-
 import type { UserWithId } from '~/lib/auth';
-
 import { verifyCsrf } from '~/utils/csrf';
 
 type AuthenticatedEvent = H3Event & {

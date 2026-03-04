@@ -8,7 +8,7 @@ export const useMapStore = defineStore('useMapStore', () => {
   const selectedPoint = computed(() =>
       mapPoints.value.find(p => p.id === selectedPointId.value) ?? null
   )
-
+  const newPoint = ref<MapPoint | null>(null);
   const shouldFlyTo= ref(true);
 
   function selectedPointWithFlyTo(point: MapPoint | null) {
@@ -37,6 +37,7 @@ export const useMapStore = defineStore('useMapStore', () => {
     })
 
     effect(() => {
+        if (newPoint.value) return;
         if (selectedPoint.value) {
           if (shouldFlyTo.value) {
             map.map?.flyTo({
@@ -55,6 +56,7 @@ export const useMapStore = defineStore('useMapStore', () => {
   }
   return {
     init,
+    newPoint,
     mapPoints,
     selectedPoint,
     selectedPointId,
