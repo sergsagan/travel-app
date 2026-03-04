@@ -2,7 +2,9 @@
 import { CENTER_EUROPE } from '~/lib/constants';
 import { useMapStore } from '~/stores/map';
 import type {LngLat} from "maplibre-gl";
+
 import { formatNumber } from "~/utils/formatNumber";
+
 
 const mapStore = useMapStore();
 const colorMode = useColorMode();
