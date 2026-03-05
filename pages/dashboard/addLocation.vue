@@ -27,6 +27,12 @@ onMounted(async () => {
 
 const { handleSubmit, errors, meta, setErrors, setFieldValue, controlledValues } = useForm({
   validationSchema: toTypedSchema(InsertLocation as unknown as ZodType),
+  initialValues: {
+    name: '',
+    description: '',
+    lat: CENTER_EUROPE[1],
+    long: CENTER_EUROPE[0],
+  },
 });
 
 const onSubmit = handleSubmit(async (values) => {
@@ -119,7 +125,7 @@ onBeforeRouteLeave(() => {
         :error="errors.description"
         :disabled="loading"
       />
-      <p>Drag the <Icon name="tabler:map-pin" class="text-warning" /> marker to your desired location</p>
+      <p>Drag the <Icon name="tabler:map-pin" class="text-warning" /> marker to your desired location or double click on the map</p>
       <p class="text-xs text-gray-400">
         Current location: {{ formatNumber(controlledValues.lat) }}, {{ formatNumber(controlledValues.long) }}
       </p>

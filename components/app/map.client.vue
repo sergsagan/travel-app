@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { CENTER_EUROPE } from '~/lib/constants';
 import { useMapStore } from '~/stores/map';
-import type {LngLat} from "maplibre-gl";
+import {type LngLat, MapMouseEvent} from "maplibre-gl";
+import { onMounted} from "vue";
 
 import { formatNumber } from "~/utils/formatNumber";
+import type { MglEvent } from "@indoorequal/vue-maplibre-gl";
 
 
 const mapStore = useMapStore();
@@ -22,6 +24,13 @@ function updateNewPoint(location: LngLat) {
   }
 }
 
+function onDubleClick(mglEvent: MglEvent<'dblclick'>) {
+  if (mapStore.newPoint) {
+    mapStore.newPoint.lat = mglEvent.event.lngLat.lat;
+    mapStore.newPoint.long = mglEvent.event.lngLat.lng;
+  }
+}
+
 onMounted(() => {
   mapStore.init()
 })
@@ -32,6 +41,7 @@ onMounted(() => {
       :map-style="style"
       :center="CENTER_EUROPE"
       :zoom="zoom"
+      @map:dblclick="onDubleClick"
   >
     <MglNavigationControl />
     <MglMarker
@@ -65,12 +75,12 @@ onMounted(() => {
     </MglMarker>
     <MglMarker
         draggable
-        :coordinates="CENTER_EUROPE"
+        :coordinates="[mapStore.newPoint.long, mapStore.newPoint.lat]"
         v-if="mapStore.newPoint"
         @update:coordinates="updateNewPoint"
     >
       <template #marker>
-        <div class="tooltip tooltip-top hover:cursor-pointer" data-tip="Drag to your desired location">
+        <div class="tooltip tooltip-top tooltip-open hover:cursor-pointer" data-tip="Drag to your desired location">
           <Icon
               name="tabler:map-pin-filled"
               size="35"
