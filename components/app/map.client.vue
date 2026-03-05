@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CENTER_EUROPE } from '~/lib/constants';
 import { useMapStore } from '~/stores/map';
-import {type LngLat, MapMouseEvent} from "maplibre-gl";
+import type { LngLat} from "maplibre-gl";
 import { onMounted} from "vue";
 
 import { formatNumber } from "~/utils/formatNumber";
