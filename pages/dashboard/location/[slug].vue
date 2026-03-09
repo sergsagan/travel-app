@@ -1,7 +1,14 @@
 <script setup lang="ts">
 const route = useRoute();
+const mapStore = useMapStore();
 const { slug } = route.params;
 const { data: location, status, error } = await useFetch(`/api/location/${slug}`, {lazy: true});
+
+effect(() => {
+  if (location.value) {
+    mapStore.mapPoints = [location.value];
+  }
+})
 </script>
 
 <template>
