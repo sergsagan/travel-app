@@ -50,7 +50,7 @@ export const useMapStore = defineStore('useMapStore', () => {
         } else if (bounds) {
           map.map?.fitBounds(bounds, {
             padding,
-            maxZoom: 10,
+            maxZoom: 12,
           });
         }
     });
@@ -59,7 +59,7 @@ export const useMapStore = defineStore('useMapStore', () => {
       if ((newValue && !oldValue) || newValue?.centerMap) {
         map.map?.flyTo({
             center: [newValue.long, newValue.lat],
-            speed: 0.8,
+            speed: 0.5,
             zoom: 6,
         })
       }

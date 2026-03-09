@@ -19,6 +19,9 @@ effect(() => {
     <div v-if="location && status !== 'pending'">
       <h2 class="text-xl">{{ location.name }}</h2>
       <p class="text-sm">{{ location.description }}</p>
+      <p v-if="!location.locationLogs.length" class="text-lg mt-4">
+        Add a location log to get started
+      </p>
     </div>
     <div v-if="error && status !== 'pending'" class="alert alert-error">
       <h2 class="text-xl">
