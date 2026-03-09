@@ -2,6 +2,8 @@
 import type { FetchError } from 'ofetch';
 import type { ZodType } from 'zod';
 
+import type { NominatimResult } from '~/lib/types';
+
 import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
 
@@ -10,6 +12,7 @@ import { InsertLocation } from '~/lib/db/schema';
 import { CENTER_EUROPE } from "~/lib/constants";
 
 import { formatNumber } from "~/utils/formatNumber";
+import PlaceSearch from "~/components/app/placeSearch.vue";
 
 
 const router = useRouter();
@@ -57,10 +60,21 @@ const onSubmit = handleSubmit(async (values) => {
     if (error.data?.data) {
       setErrors(error.data?.data);
     }
-    submitError.value = error.data?.statusMessage || error.statusMessage || 'An unexpected error occurred';
+    submitError.value = getFetchErrorMessage(error);
   }
   loading.value = false;
 });
+
+function searchResultSelected(result: NominatimResult) {
+  setFieldValue('name', result.display_name);
+  mapStore.newPoint = {
+    id: 1,
+    name: 'New Point',
+    description: '',
+    long: Number(result.lon),
+    lat: Number(result.lat),
+  }
+}
 
 effect(() => {
   if (mapStore.newPoint) {
@@ -125,10 +139,23 @@ onBeforeRouteLeave(() => {
         :error="errors.description"
         :disabled="loading"
       />
-      <p>Drag the <Icon name="tabler:map-pin" class="text-warning" /> marker to your desired location or double click on the map</p>
       <p class="text-xs text-gray-400">
         Current location: {{ formatNumber(controlledValues.lat) }}, {{ formatNumber(controlledValues.long) }}
       </p>
+      <p>
+        To set the coordinates:
+      </p>
+      <ul class="list-disc ml-4 text-sm">
+        <li>
+          <p>Drag the <Icon name="tabler:map-pin-filled" class="text-warning" /> marker on the map</p>
+        </li>
+        <li>
+          Double click on the map
+        </li>
+        <li>
+          Search for a location below.
+        </li>
+      </ul>
       <div class="flex justify-end gap-2">
         <button
           :disabled="loading"
@@ -152,6 +179,8 @@ onBeforeRouteLeave(() => {
           />
         </button>
       </div>
-    </form>
+    </Form>
+    <div class="divider" />
+    <PlaceSearch @result-selected="searchResultSelected" />
   </div>
 </template>
