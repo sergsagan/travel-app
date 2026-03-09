@@ -6,7 +6,7 @@ import slugify from 'slugify';
 import { findLocationByName, findUniqueSlug, insertLocation } from '~/lib/db/queries/location';
 import { InsertLocation } from '~/lib/db/schema';
 import defineAuthenticatedEventHandler from '~/utils/defineAuthenticatedEventHandler';
-import sendZodError from "~/utils/send-zod-error";
+import sendZodError from "~/utils/sendZodError";
 
 export default defineAuthenticatedEventHandler(async (event) => {
   const result = await readValidatedBody(event, InsertLocation.safeParse);
