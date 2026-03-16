@@ -1,4 +1,5 @@
 import type { UserWithId } from '~/lib/auth';
+import type {RouteLocationRaw} from "vue-router";
 
 declare module 'h3' {
   interface H3EventContext {
@@ -15,6 +16,8 @@ export type MapPoint = {
   id: number;
   name: string;
   description: string | null;
+  to?: RouteLocationRaw;
+  toLabel?: string;
 } & LatLongItem;
 
 export type NominatimResult = {

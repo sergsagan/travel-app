@@ -11,6 +11,18 @@ import { location } from '~/lib/db/schema';
 type Location = InferSelectModel<typeof location>;
 const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 5);
 
+export async function findLocation(slug: string, userId: number) {
+  return db.query.location.findFirst({
+    where: and(
+        eq(location.slug, slug),
+        eq(location.userId, userId),
+    ),
+    with: {
+      locationLogs: true,
+    },
+  });
+}
+
 export async function findLocations(userId: number) {
   return db.query.location.findMany({
     where: eq(location.userId, userId),
