@@ -2,11 +2,17 @@ import type { LngLatBounds } from "maplibre-gl";
 import type { MapPoint } from '~/lib/types';
 
 export const useMapStore = defineStore('useMapStore', () => {
-  const mapPoints = ref<MapPoint[]>([]);
+  const mapPoints = shallowRef<MapPoint[]>([]);
   const selectedPointId = ref<number | null>(null);
 
+  const mapPointsById = computed(() =>
+      new Map(mapPoints.value.map(p => [p.id, p]))
+  )
+
   const selectedPoint = computed(() =>
-      mapPoints.value.find(p => p.id === selectedPointId.value) ?? null
+      selectedPointId.value
+          ? mapPointsById.value.get(selectedPointId.value) ?? null
+          : null
   )
   const newPoint = ref<MapPoint & { centerMap?: boolean} | null>(null);
   const shouldFlyTo= ref(true);
@@ -25,7 +31,7 @@ export const useMapStore = defineStore('useMapStore', () => {
     let bounds: LngLatBounds | null = null;
     const padding = 60;
 
-    effect(() => {
+    watchEffect(() => {
       const firstPoint = mapPoints.value[0];
 
       if (!firstPoint) {
@@ -36,7 +42,7 @@ export const useMapStore = defineStore('useMapStore', () => {
       },new LngLatBounds([firstPoint.long, firstPoint.lat], [firstPoint.long, firstPoint.lat]));
     })
 
-    effect(() => {
+    watchEffect(() => {
         if (newPoint.value) return;
         if (selectedPoint.value) {
           if (shouldFlyTo.value) {
