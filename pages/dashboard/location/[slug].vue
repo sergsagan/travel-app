@@ -1,13 +1,10 @@
 <script setup lang="ts">
-const route = useRoute();
 const mapStore = useMapStore();
-const { slug } = route.params;
-const { data: location, status, error } = await useFetch(`/api/location/${slug}`, {lazy: true});
+const locationsStore = useLocationStore();
+const { currentLocation: location, currentLocationStatus: status, currentLocationError: error } = storeToRefs(locationsStore);
 
-effect(() => {
-  if (location.value) {
-    mapStore.mapPoints = [location.value];
-  }
+onMounted(() => {
+  locationsStore.refreshCurrentLocation();
 })
 </script>
 
@@ -19,7 +16,7 @@ effect(() => {
     <div v-if="location && status !== 'pending'">
       <h2 class="text-xl">{{ location.name }}</h2>
       <p class="text-sm">{{ location.description }}</p>
-      <div v-if="!location.locationLogs.length" class="mt-4">
+      <div v-if="(location.locationLogs?.length ?? 0) === 0" class="mt-4">
         <p class="text-sm italic">
           Add a location log to get started
         </p>

@@ -5,7 +5,7 @@ import { createInsertSchema } from 'drizzle-zod';
 
 import { user } from '../../db/schema/auth';
 import { relations } from "drizzle-orm";
-import { locationLog } from "~/lib/db/schema/locationLog";
+import {locationLog, type SelectLocationLog} from "~/lib/db/schema/locationLog";
 
 export const location = sqliteTable('location', {
   id: int().primaryKey({ autoIncrement: true }),
@@ -41,3 +41,6 @@ export const InsertLocation = createInsertSchema(location, {
 // @ts-expect-error -- drizzle/libsql error typing
 export type InsertLocation = z.infer<typeof InsertLocation>;
 export type SelectLocation = typeof location.$inferSelect;
+export type SelectLocationWithLogs = SelectLocation & {
+  locationLogs: SelectLocationLog[];
+};
