@@ -50,6 +50,14 @@ watchEffect(() => {
       },
       icon: 'tabler:map'
     }, {
+      id: 'link-location-edit',
+      label: 'Edit Location',
+      to: {
+        name: 'dashboard-location-slug-edit',
+        params: { slug: currentLocation.value?.slug },
+      },
+      icon: 'tabler:map-pin-cog'
+    },{
       id: 'link-location-add',
       label: 'Add Location Log',
       to: {
