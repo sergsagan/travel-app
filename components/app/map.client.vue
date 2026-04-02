@@ -10,6 +10,16 @@ import type { MglEvent } from "@indoorequal/vue-maplibre-gl";
 const mapStore = useMapStore();
 const colorMode = useColorMode();
 
+const validPoints = computed(() =>
+    mapStore.mapPoints.filter(
+        (p) =>
+            typeof p.lat === 'number' &&
+            typeof p.long === 'number' &&
+            !Number.isNaN(p.lat) &&
+            !Number.isNaN(p.long)
+    )
+)
+
 const style = computed(() =>
   colorMode.value === 'dark'
     ? '/styles/dark.json'
@@ -42,7 +52,7 @@ await mapStore.init()
   >
     <MglNavigationControl />
     <MglMarker
-      v-for="point in mapStore.mapPoints"
+      v-for="point in validPoints"
       :key="point.id"
       :coordinates="[point.long, point.lat]"
     >

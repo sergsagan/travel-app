@@ -5,6 +5,15 @@ export const useMapStore = defineStore('useMapStore', () => {
   const mapPoints = shallowRef<MapPoint[]>([]);
   const selectedPointId = ref<number | null>(null);
 
+  function isValidCoord(point: { lat: any; long: any }) {
+    return (
+        typeof point.lat === 'number' &&
+        typeof point.long === 'number' &&
+        !Number.isNaN(point.lat) &&
+        !Number.isNaN(point.long)
+    )
+  }
+
   const mapPointsById = computed(() =>
       new Map(mapPoints.value.map(p => [p.id, p]))
   )
@@ -32,19 +41,21 @@ export const useMapStore = defineStore('useMapStore', () => {
     const padding = 60;
 
     watchEffect(() => {
-      const firstPoint = mapPoints.value[0];
+      const firstPoint = mapPoints.value.find(isValidCoord)
 
       if (!firstPoint) {
         return;
       }
       bounds = mapPoints.value.reduce((bounds, point) => {
+        if (!isValidCoord(point)) return bounds;
+
         return bounds.extend([point.long, point.lat]);
       },new LngLatBounds([firstPoint.long, firstPoint.lat], [firstPoint.long, firstPoint.lat]));
     })
 
     watchEffect(() => {
         if (newPoint.value) return;
-        if (selectedPoint.value) {
+        if (selectedPoint.value && isValidCoord(selectedPoint.value)) {
           if (shouldFlyTo.value) {
             map.map?.flyTo({
               center: [selectedPoint.value.long, selectedPoint.value.lat],
