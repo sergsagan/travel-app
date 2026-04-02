@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import SidebarButton from '~/components/sidebarButton.vue';
+import {CURRENT_LOCATION_PAGES, LOCATION_PAGES} from "~/lib/constants";
 
 const isSidebarOpen = ref(true);
 const ready = ref(false);
@@ -22,7 +23,7 @@ onMounted(() => {
 });
 
 watchEffect(() => {
-  if (route.name === 'dashboard') {
+  if (LOCATION_PAGES.has(route.name?.toString() ?? '')) {
     sidebarStore.sidebarTopItems = [{
       id: 'link-dashboard',
       label: 'Locations',
@@ -35,7 +36,7 @@ watchEffect(() => {
       href: '/dashboard/addLocation',
       icon: 'tabler:circle-plus-filled'
     }]
-  } else if (route.name === 'dashboard-location-slug') {
+  } else if (CURRENT_LOCATION_PAGES.has(route.name?.toString() ?? '')) {
     sidebarStore.sidebarTopItems = [{
       id: 'link-dashboard',
       label: 'Back to Locations',

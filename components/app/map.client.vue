@@ -2,7 +2,6 @@
 import { CENTER_EUROPE } from '~/lib/constants';
 import { useMapStore } from '~/stores/map';
 import type { LngLat} from "maplibre-gl";
-import { onMounted} from "vue";
 
 import { formatNumber } from "~/utils/formatNumber";
 import type { MglEvent } from "@indoorequal/vue-maplibre-gl";
@@ -31,9 +30,7 @@ function onDubleClick(mglEvent: MglEvent<'dblclick'>) {
   }
 }
 
-onMounted(() => {
-  mapStore.init()
-})
+await mapStore.init()
 </script>
 
 <template>

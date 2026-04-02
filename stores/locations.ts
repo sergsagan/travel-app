@@ -1,6 +1,7 @@
 import { useMapStore } from '~/stores/map';
 import type { MapPoint } from "~/lib/types";
 import type { SelectLocationWithLogs } from "~/lib/db/schema";
+import { CURRENT_LOCATION_PAGES, LOCATION_PAGES } from "~/lib/constants";
 
 export const useLocationStore = defineStore('useLocationStore', () => {
   const route = useRoute();
@@ -33,7 +34,7 @@ export const useLocationStore = defineStore('useLocationStore', () => {
   const mapStore = useMapStore();
 
   watchEffect(() => {
-    if (locations.value) {
+    if (locations.value && LOCATION_PAGES.has(route.name?.toString() || '')) {
       const mapPoints: MapPoint[] = [];
       const sidebarItems: SidebarItem[] = [];
 
@@ -51,6 +52,9 @@ export const useLocationStore = defineStore('useLocationStore', () => {
 
       sidebarStore.sidebarItems = sidebarItems;
       mapStore.mapPoints = mapPoints;
+    } else if (currentLocation.value && CURRENT_LOCATION_PAGES.has(route.name?.toString() || '')) {
+      sidebarStore.sidebarItems = [];
+      mapStore.mapPoints = [currentLocation.value];
     }
     sidebarStore.loading = locationsStatus.value === 'pending';
   });
