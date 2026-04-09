@@ -37,21 +37,23 @@ export const useMapStore = defineStore('useMapStore', () => {
 
     const map = useMap();
 
-    let bounds: LngLatBounds | null = null;
+    const bounds = shallowRef<LngLatBounds | null>(null);
     const padding = 60;
 
-    watchEffect(() => {
-      const firstPoint = mapPoints.value.find(isValidCoord)
+    watch(mapPoints, (points) => {
+      const firstPoint = points.find(isValidCoord)
 
       if (!firstPoint) {
+        bounds.value = null;
         return;
       }
-      bounds = mapPoints.value.reduce((bounds, point) => {
-        if (!isValidCoord(point)) return bounds;
 
-        return bounds.extend([point.long, point.lat]);
+      bounds.value = points.reduce((computedBounds, point) => {
+        if (!isValidCoord(point)) return computedBounds;
+
+        return computedBounds.extend([point.long, point.lat]);
       },new LngLatBounds([firstPoint.long, firstPoint.lat], [firstPoint.long, firstPoint.lat]));
-    })
+    }, { immediate: true })
 
     watchEffect(() => {
         if (newPoint.value) return;
@@ -64,8 +66,8 @@ export const useMapStore = defineStore('useMapStore', () => {
             })
           }
           shouldFlyTo.value = true;
-        } else if (bounds) {
-          map.map?.fitBounds(bounds, {
+        } else if (bounds.value) {
+          map.map?.fitBounds(bounds.value, {
             padding,
             maxZoom: 12,
           });
