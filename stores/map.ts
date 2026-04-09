@@ -4,6 +4,7 @@ import type { MapPoint } from '~/lib/types';
 export const useMapStore = defineStore('useMapStore', () => {
   const mapPoints = shallowRef<MapPoint[]>([]);
   const selectedPointId = ref<number | null>(null);
+  let stopWatchers: Array<() => void> = [];
 
   function isValidCoord(point: { lat: any; long: any }) {
     return (
@@ -19,7 +20,7 @@ export const useMapStore = defineStore('useMapStore', () => {
   )
 
   const selectedPoint = computed(() =>
-      selectedPointId.value
+      selectedPointId.value !== null
           ? mapPointsById.value.get(selectedPointId.value) ?? null
           : null
   )
@@ -31,7 +32,18 @@ export const useMapStore = defineStore('useMapStore', () => {
     selectedPointId.value = point?.id ?? null;
   }
 
+  function cleanupWatchers() {
+    stopWatchers.forEach(stop => stop());
+    stopWatchers = [];
+  }
+
+  onScopeDispose(() => {
+    cleanupWatchers();
+  });
+
   async function init() {
+    cleanupWatchers();
+
     const { LngLatBounds } = await import("maplibre-gl");
     const { useMap } = await import("@indoorequal/vue-maplibre-gl");
 
@@ -40,7 +52,7 @@ export const useMapStore = defineStore('useMapStore', () => {
     const bounds = shallowRef<LngLatBounds | null>(null);
     const padding = 60;
 
-    watch(mapPoints, (points) => {
+    const stopBoundsWatcher = watch(mapPoints, (points) => {
       const firstPoint = points.find(isValidCoord)
 
       if (!firstPoint) {
@@ -55,7 +67,7 @@ export const useMapStore = defineStore('useMapStore', () => {
       },new LngLatBounds([firstPoint.long, firstPoint.lat], [firstPoint.long, firstPoint.lat]));
     }, { immediate: true })
 
-    watchEffect(() => {
+    const stopSelectionWatcher = watchEffect(() => {
         if (newPoint.value) return;
         if (selectedPoint.value && isValidCoord(selectedPoint.value)) {
           if (shouldFlyTo.value) {
@@ -74,7 +86,7 @@ export const useMapStore = defineStore('useMapStore', () => {
         }
     });
 
-    watch(newPoint, (newValue, oldValue) => {
+    const stopNewPointWatcher = watch(newPoint, (newValue, oldValue) => {
       if ((newValue && !oldValue) || newValue?.centerMap) {
         map.map?.flyTo({
             center: [newValue.long, newValue.lat],
@@ -83,6 +95,8 @@ export const useMapStore = defineStore('useMapStore', () => {
         })
       }
     }, { immediate: true });
+
+    stopWatchers = [stopBoundsWatcher, stopSelectionWatcher, stopNewPointWatcher];
   }
 
   return {

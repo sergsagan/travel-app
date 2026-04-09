@@ -34,7 +34,11 @@ export const useLocationStore = defineStore('useLocationStore', () => {
   const mapStore = useMapStore();
 
   watchEffect(() => {
-    if (locations.value && LOCATION_PAGES.has(route.name?.toString() || '')) {
+    const routeName = route.name?.toString() || '';
+    const isLocationPage = LOCATION_PAGES.has(routeName);
+    const isCurrentLocationPage = CURRENT_LOCATION_PAGES.has(routeName);
+
+    if (locations.value && isLocationPage) {
       const mapPoints: MapPoint[] = [];
       const sidebarItems: SidebarItem[] = [];
 
@@ -52,11 +56,18 @@ export const useLocationStore = defineStore('useLocationStore', () => {
 
       sidebarStore.sidebarItems = sidebarItems;
       mapStore.mapPoints = mapPoints;
-    } else if (currentLocation.value && CURRENT_LOCATION_PAGES.has(route.name?.toString() || '')) {
+    } else if (currentLocation.value && isCurrentLocationPage) {
       sidebarStore.sidebarItems = [];
       mapStore.mapPoints = [currentLocation.value];
     }
-    sidebarStore.loading = locationsStatus.value === 'pending';
+
+    if (isCurrentLocationPage) {
+      sidebarStore.loading = currentLocationStatus.value === 'pending';
+    } else if (isLocationPage) {
+      sidebarStore.loading = locationsStatus.value === 'pending';
+    } else {
+      sidebarStore.loading = false;
+    }
   });
 
   return {
