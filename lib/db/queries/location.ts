@@ -74,3 +74,19 @@ export async function insertLocation(insertable: InsertLocation, slug: string, u
 
   return created[0];
 }
+
+export async function updateLocationBySlug(updates: InsertLocation, slug: string, userId: number): Promise<Location> {
+    const updated = await db.update(location).set(updates).where(and(
+        eq(location.slug, slug),
+        eq(location.userId, userId),
+    )).returning();
+
+    if (!updated[0]) {
+        throw createError({
+            statusCode: 404,
+            statusMessage: 'Location not found',
+        });
+    }
+
+    return updated[0];
+}

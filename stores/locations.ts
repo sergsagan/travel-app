@@ -1,6 +1,7 @@
 import { useMapStore } from '~/stores/map';
 import type { MapPoint } from "~/lib/types";
 import type { SelectLocationWithLogs } from "~/lib/db/schema";
+import { CURRENT_LOCATION_PAGES, LOCATION_PAGES } from "~/lib/constants";
 
 export const useLocationStore = defineStore('useLocationStore', () => {
   const route = useRoute();
@@ -33,7 +34,11 @@ export const useLocationStore = defineStore('useLocationStore', () => {
   const mapStore = useMapStore();
 
   watchEffect(() => {
-    if (locations.value) {
+    const routeName = route.name?.toString() || '';
+    const isLocationPage = LOCATION_PAGES.has(routeName);
+    const isCurrentLocationPage = CURRENT_LOCATION_PAGES.has(routeName);
+
+    if (locations.value && isLocationPage) {
       const mapPoints: MapPoint[] = [];
       const sidebarItems: SidebarItem[] = [];
 
@@ -51,8 +56,18 @@ export const useLocationStore = defineStore('useLocationStore', () => {
 
       sidebarStore.sidebarItems = sidebarItems;
       mapStore.mapPoints = mapPoints;
+    } else if (currentLocation.value && isCurrentLocationPage) {
+      sidebarStore.sidebarItems = [];
+      mapStore.mapPoints = [currentLocation.value];
     }
-    sidebarStore.loading = locationsStatus.value === 'pending';
+
+    if (isCurrentLocationPage) {
+      sidebarStore.loading = currentLocationStatus.value === 'pending';
+    } else if (isLocationPage) {
+      sidebarStore.loading = locationsStatus.value === 'pending';
+    } else {
+      sidebarStore.loading = false;
+    }
   });
 
   return {

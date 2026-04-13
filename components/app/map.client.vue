@@ -2,7 +2,6 @@
 import { CENTER_EUROPE } from '~/lib/constants';
 import { useMapStore } from '~/stores/map';
 import type { LngLat} from "maplibre-gl";
-import { onMounted} from "vue";
 
 import { formatNumber } from "~/utils/formatNumber";
 import type { MglEvent } from "@indoorequal/vue-maplibre-gl";
@@ -10,6 +9,16 @@ import type { MglEvent } from "@indoorequal/vue-maplibre-gl";
 
 const mapStore = useMapStore();
 const colorMode = useColorMode();
+
+const validPoints = computed(() =>
+    mapStore.mapPoints.filter(
+        (p) =>
+            typeof p.lat === 'number' &&
+            typeof p.long === 'number' &&
+            !Number.isNaN(p.lat) &&
+            !Number.isNaN(p.long)
+    )
+)
 
 const style = computed(() =>
   colorMode.value === 'dark'
@@ -31,9 +40,7 @@ function onDubleClick(mglEvent: MglEvent<'dblclick'>) {
   }
 }
 
-onMounted(() => {
-  mapStore.init()
-})
+await mapStore.init()
 </script>
 
 <template>
@@ -45,7 +52,7 @@ onMounted(() => {
   >
     <MglNavigationControl />
     <MglMarker
-      v-for="point in mapStore.mapPoints"
+      v-for="point in validPoints"
       :key="point.id"
       :coordinates="[point.long, point.lat]"
     >

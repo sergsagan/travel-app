@@ -4,13 +4,23 @@ import type { MapPoint } from '~/lib/types';
 export const useMapStore = defineStore('useMapStore', () => {
   const mapPoints = shallowRef<MapPoint[]>([]);
   const selectedPointId = ref<number | null>(null);
+  let stopWatchers: Array<() => void> = [];
+
+  function isValidCoord(point: { lat: any; long: any }) {
+    return (
+        typeof point.lat === 'number' &&
+        typeof point.long === 'number' &&
+        !Number.isNaN(point.lat) &&
+        !Number.isNaN(point.long)
+    )
+  }
 
   const mapPointsById = computed(() =>
       new Map(mapPoints.value.map(p => [p.id, p]))
   )
 
   const selectedPoint = computed(() =>
-      selectedPointId.value
+      selectedPointId.value !== null
           ? mapPointsById.value.get(selectedPointId.value) ?? null
           : null
   )
@@ -22,29 +32,44 @@ export const useMapStore = defineStore('useMapStore', () => {
     selectedPointId.value = point?.id ?? null;
   }
 
+  function cleanupWatchers() {
+    stopWatchers.forEach(stop => stop());
+    stopWatchers = [];
+  }
+
+  onScopeDispose(() => {
+    cleanupWatchers();
+  });
+
   async function init() {
+    cleanupWatchers();
+
     const { LngLatBounds } = await import("maplibre-gl");
     const { useMap } = await import("@indoorequal/vue-maplibre-gl");
 
     const map = useMap();
 
-    let bounds: LngLatBounds | null = null;
+    const bounds = shallowRef<LngLatBounds | null>(null);
     const padding = 60;
 
-    watchEffect(() => {
-      const firstPoint = mapPoints.value[0];
+    const stopBoundsWatcher = watch(mapPoints, (points) => {
+      const firstPoint = points.find(isValidCoord)
 
       if (!firstPoint) {
+        bounds.value = null;
         return;
       }
-      bounds = mapPoints.value.reduce((bounds, point) => {
-        return bounds.extend([point.long, point.lat]);
-      },new LngLatBounds([firstPoint.long, firstPoint.lat], [firstPoint.long, firstPoint.lat]));
-    })
 
-    watchEffect(() => {
+      bounds.value = points.reduce((computedBounds, point) => {
+        if (!isValidCoord(point)) return computedBounds;
+
+        return computedBounds.extend([point.long, point.lat]);
+      },new LngLatBounds([firstPoint.long, firstPoint.lat], [firstPoint.long, firstPoint.lat]));
+    }, { immediate: true })
+
+    const stopSelectionWatcher = watchEffect(() => {
         if (newPoint.value) return;
-        if (selectedPoint.value) {
+        if (selectedPoint.value && isValidCoord(selectedPoint.value)) {
           if (shouldFlyTo.value) {
             map.map?.flyTo({
               center: [selectedPoint.value.long, selectedPoint.value.lat],
@@ -53,15 +78,15 @@ export const useMapStore = defineStore('useMapStore', () => {
             })
           }
           shouldFlyTo.value = true;
-        } else if (bounds) {
-          map.map?.fitBounds(bounds, {
+        } else if (bounds.value) {
+          map.map?.fitBounds(bounds.value, {
             padding,
             maxZoom: 12,
           });
         }
     });
 
-    watch(newPoint, (newValue, oldValue) => {
+    const stopNewPointWatcher = watch(newPoint, (newValue, oldValue) => {
       if ((newValue && !oldValue) || newValue?.centerMap) {
         map.map?.flyTo({
             center: [newValue.long, newValue.lat],
@@ -70,6 +95,8 @@ export const useMapStore = defineStore('useMapStore', () => {
         })
       }
     }, { immediate: true });
+
+    stopWatchers = [stopBoundsWatcher, stopSelectionWatcher, stopNewPointWatcher];
   }
 
   return {
