@@ -6,6 +6,12 @@ const { currentLocation: location, currentLocationStatus: status, currentLocatio
 onMounted(() => {
   locationsStore.refreshCurrentLocation();
 })
+
+onBeforeRouteUpdate((to) => {
+  if (to.name === 'dashboard-location-slug') {
+    locationsStore.refreshCurrentLocation();
+  }
+})
 </script>
 
 <template>

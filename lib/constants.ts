@@ -6,3 +6,8 @@ export const CURRENT_LOCATION_PAGES = new Set([
     'dashboard-location-slug-add',
     'dashboard-location-slug-edit'
 ]);
+export const EDIT_PAGES = new Set([
+    'dashboard-addLocation',
+    'dashboard-location-slug-add',
+    'dashboard-location-slug-edit'
+]);

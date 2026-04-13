@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { FetchError } from 'ofetch';
 import type { ZodType } from 'zod';
 import FormField from "~/components/app/formField.vue";
 import PlaceSearch from "~/components/app/placeSearch.vue";
@@ -8,26 +9,46 @@ import type { NominatimResult } from "~/lib/types";
 import { formatNumber } from "~/utils/formatNumber";
 
 const props = defineProps<{
+  initialValues?: InsertLocation | null;
   onSubmit: (location: InsertLocation) => Promise<any>;
-  loading: boolean;
-  submitted: boolean;
-  submitErrors: Record<string, string>;
+  onSubmitComplete: () => void;
+  submitLabel: string;
+  submitIcon: string;
 }>();
 
 const mapStore = useMapStore();
 const router = useRouter();
+const submitError = ref('');
+const loading = ref(false);
+const submitted = ref(false);
 
 const { handleSubmit, errors, meta, setErrors, setFieldValue, controlledValues } = useForm({
   validationSchema: toTypedSchema(InsertLocation as unknown as ZodType),
   initialValues: {
-    name: '',
-    description: '',
-    lat: CENTER_EUROPE[1],
-    long: CENTER_EUROPE[0],
+    name: props.initialValues?.name || '',
+    description: props.initialValues?.description || '',
+    lat: props.initialValues?.lat || CENTER_EUROPE[1],
+    long: props.initialValues?.long || CENTER_EUROPE[0],
   },
 });
 
-const onSubmit = handleSubmit(props.onSubmit);
+const onSubmit = handleSubmit(async (values: InsertLocation) => {
+  try {
+    submitError.value = '';
+    loading.value = true;
+    await props.onSubmit(values);
+    submitted.value = true;
+    props.onSubmitComplete();
+  }
+  catch (e) {
+    const error = e as FetchError;
+    if (error.data?.data) {
+      setErrors(error.data?.data);
+    }
+    submitError.value = getFetchErrorMessage(error);
+  }
+  loading.value = false;
+});
 
 function searchResultSelected(result: NominatimResult) {
   setFieldValue('name', result.display_name);
@@ -35,14 +56,10 @@ function searchResultSelected(result: NominatimResult) {
     id: 1,
     name: 'New Point',
     description: '',
-    long: Number(result.lon),
     lat: Number(result.lat),
+    long: Number(result.lon),
   }
 }
-
-effect(() => {
-  setErrors(props.submitErrors);
-})
 
 effect(() => {
   if (mapStore.newPoint) {
@@ -56,13 +73,13 @@ onMounted(() => {
     id: 1,
     name: 'New Point',
     description: '',
-    long: CENTER_EUROPE[0],
-    lat: CENTER_EUROPE[1],
+    lat: props.initialValues?.lat || CENTER_EUROPE[1],
+    long: props.initialValues?.long || CENTER_EUROPE[0],
   }
 });
 
 onBeforeRouteLeave(() => {
-  if (!props.submitted && meta.value.dirty) {
+  if (!submitted.value && meta.value.dirty) {
     const confirm = window.confirm(
         'Are you sure you want to leave? All unsaved changes will be lost.',
     );
@@ -76,6 +93,9 @@ onBeforeRouteLeave(() => {
 </script>
 
 <template>
+  <div v-if="submitError" role="alert" class="alert alert-error">
+    <span>{{ submitError }}</span>
+  </div>
   <form class="flex flex-col gap-1" @submit.prevent="onSubmit">
     <FormField
         label="Location Name"
@@ -122,11 +142,11 @@ onBeforeRouteLeave(() => {
           type="submit"
           class="btn btn-primary min-w-27.5"
       >
-        Add Location
+        {{ submitLabel }}
         <span v-if="loading" class="loading loading-spinner loading-sm" />
         <Icon
             v-else
-            name="tabler:circle-plus-filled"
+            :name="props.submitIcon"
             size="24"
         />
       </button>

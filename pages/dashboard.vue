@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import SidebarButton from '~/components/sidebarButton.vue';
-import {CURRENT_LOCATION_PAGES, LOCATION_PAGES} from "~/lib/constants";
+import { CURRENT_LOCATION_PAGES, EDIT_PAGES, LOCATION_PAGES } from "~/lib/constants";
 
 const isSidebarOpen = ref(true);
 const ready = ref(false);
@@ -8,7 +8,15 @@ const route = useRoute();
 const sidebarStore = useSidebarStore();
 const locationsStore = useLocationStore();
 const mapStore = useMapStore();
-const { currentLocation } = storeToRefs(locationsStore);
+const { currentLocation, currentLocationStatus } = storeToRefs(locationsStore);
+
+if (LOCATION_PAGES.has(route.name?.toString() ?? '')) {
+  await locationsStore.refreshLocations();
+}
+
+if (CURRENT_LOCATION_PAGES.has(route.name?.toString() ?? '')) {
+  await locationsStore.refreshCurrentLocation();
+}
 
 onMounted(() => {
   const saved = localStorage.getItem('isSidebarOpen');
@@ -16,10 +24,6 @@ onMounted(() => {
     isSidebarOpen.value = saved === 'true';
   }
   ready.value = true;
-
-  if (route.path !== '/dashboard') {
-    locationsStore.refreshLocations();
-  }
 });
 
 watchEffect(() => {
@@ -44,10 +48,10 @@ watchEffect(() => {
       icon: 'tabler:arrow-left'
     }, {
       id: 'link-dashboard',
-      label: currentLocation.value ? currentLocation.value.name : 'View Logs',
+      label: currentLocationStatus.value === 'pending' || !currentLocation.value ? 'Loading...' : currentLocation.value.name,
       to: {
         name: 'dashboard-location-slug',
-        params: { slug: currentLocation.value?.slug },
+        params: { slug: route.params.slug },
       },
       icon: 'tabler:map'
     }, {
@@ -55,7 +59,7 @@ watchEffect(() => {
       label: 'Edit Location',
       to: {
         name: 'dashboard-location-slug-edit',
-        params: { slug: currentLocation.value?.slug },
+        params: { slug: route.params.slug },
       },
       icon: 'tabler:map-pin-cog'
     },{
@@ -63,7 +67,7 @@ watchEffect(() => {
       label: 'Add Location Log',
       to: {
         name: 'dashboard-location-slug-add',
-        params: { slug: currentLocation.value?.slug },
+        params: { slug: route.params.slug },
       },
       icon: 'tabler:circle-plus-filled'
     }]
@@ -133,8 +137,10 @@ function toggleSidebar() {
     </div>
     <div class="flex-1 overflow-auto bg-base-200">
       <div
-          class="flex size-full" :class="{'flex-col': route.path !== '/dashboard/addLocation'}">
-        <NuxtPage />
+          class="flex size-full"
+          :class="{'flex-col': !EDIT_PAGES.has(route.name?.toString() ?? '')}"
+      >
+        <NuxtPage :class="{'w-96': EDIT_PAGES.has(route.name?.toString() ?? '')}" />
         <div class="flex-1 p-2">
           <AppMap />
         </div>
