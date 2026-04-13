@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { CURRENT_LOCATION_PAGES } from '~/lib/constants';
+
 const route = useRoute();
 const locationsStore = useLocationStore();
 const { currentLocation: location, currentLocationStatus: status, currentLocationError: error } = storeToRefs(locationsStore);
@@ -7,8 +9,13 @@ onMounted(() => {
   locationsStore.refreshCurrentLocation();
 })
 
-onBeforeRouteUpdate((to) => {
-  if (to.name === 'dashboard-location-slug') {
+onBeforeRouteUpdate((to, from) => {
+  const toName = to.name?.toString() || '';
+  const isCurrentLocationPage = CURRENT_LOCATION_PAGES.has(toName);
+  const slugChanged = to.params.slug !== from.params.slug;
+  const routeChanged = to.name !== from.name;
+
+  if (isCurrentLocationPage && (slugChanged || routeChanged)) {
     locationsStore.refreshCurrentLocation();
   }
 })
