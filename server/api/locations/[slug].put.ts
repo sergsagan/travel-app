@@ -1,4 +1,4 @@
-import {findLocation, findLocationByName, updateLocationBySlug} from '~/lib/db/queries/location';
+import { findLocationByName, updateLocationBySlug } from '~/lib/db/queries/location';
 import defineAuthenticatedEventHandler from '~/utils/defineAuthenticatedEventHandler';
 import { InsertLocation } from "~/lib/db/schema";
 import sendZodError from "~/utils/sendZodError";
