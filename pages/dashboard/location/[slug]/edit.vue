@@ -1,38 +1,16 @@
 <script setup lang="ts">
-import type { FetchError } from 'ofetch';
 import LocationForm from "~/components/locationForm.vue";
 import type { InsertLocation } from "~/lib/db/schema";
 
 const locationStore = useLocationStore();
-const csrfToken = ref<string | undefined>(undefined);
+const { getCsrfHeaders } = useCsrfHeaders();
+const { submitLocation } = useLocationSubmit(getCsrfHeaders);
 const route = useRoute();
 const slug = computed(() => route.params.slug as string);
 
-onMounted(async () => {
-  const { token } = await $fetch('/api/csrf');
-  csrfToken.value = token;
-});
-
 
 async function onSubmit(values: InsertLocation) {
-  try {
-    await $fetch(`/api/locations/${slug.value}`, {
-      method: 'put',
-      credentials: 'same-origin',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(csrfToken.value
-            ? {'x-csrf-token': csrfToken.value}
-            : {}),
-      },
-      body: JSON.stringify(values),
-    });
-
-  }
-  catch (e) {
-    const error = e as FetchError;
-    console.error(error);
-  }
+  await submitLocation(`/api/locations/${slug.value}`, 'put', values);
 }
 function onSubmitComplete() {
   navigateTo({

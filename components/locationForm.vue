@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { FetchError } from 'ofetch';
 import type { ZodType } from 'zod';
+import { toTypedSchema } from '@vee-validate/zod';
+import { useForm } from 'vee-validate';
 import FormField from "~/components/app/formField.vue";
 import PlaceSearch from "~/components/app/placeSearch.vue";
 import { CENTER_EUROPE } from "~/lib/constants";
