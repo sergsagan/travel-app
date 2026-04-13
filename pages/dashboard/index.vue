@@ -27,10 +27,10 @@ onMounted(() => {
         @mouseleave="mapStore.selectedPointId = null"
       >
         <div class="card-body">
-          <h3 class="text-xl">
+          <h3 class="text-xl truncate">
             {{ location.name }}
           </h3>
-          <p>{{ location.description }}</p>
+          <p class="line-clamp-4 wrap-break-word">{{ location.description }}</p>
         </div>
       </NuxtLink>
     </div>
@@ -43,3 +43,13 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.line-clamp-4 {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>
