@@ -1,18 +1,18 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends LatLongItem">
 import type { FetchError } from 'ofetch';
-import type { ZodType } from 'zod';
+import type {ZodSchema, ZodType } from 'zod';
 import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
 import FormField from "~/components/app/formField.vue";
 import PlaceSearch from "~/components/app/placeSearch.vue";
 import { CENTER_EUROPE } from "~/lib/constants";
-import { InsertLocation } from "~/lib/db/schema";
-import type { NominatimResult } from "~/lib/types";
+import type {LatLongItem, NominatimResult} from "~/lib/types";
 import { formatNumber } from "~/utils/formatNumber";
 
 const props = defineProps<{
-  initialValues?: InsertLocation | null;
-  onSubmit: (location: InsertLocation) => Promise<any>;
+  initialValues: T;
+  schema: ZodSchema;
+  onSubmit: (location: T) => Promise<any>;
   onSubmitComplete: () => void;
   submitLabel: string;
   submitIcon: string;
@@ -25,16 +25,11 @@ const loading = ref(false);
 const submitted = ref(false);
 
 const { handleSubmit, errors, meta, setErrors, setFieldValue, controlledValues } = useForm({
-  validationSchema: toTypedSchema(InsertLocation as unknown as ZodType),
-  initialValues: {
-    name: props.initialValues?.name || '',
-    description: props.initialValues?.description || '',
-    lat: props.initialValues?.lat || CENTER_EUROPE[1],
-    long: props.initialValues?.long || CENTER_EUROPE[0],
-  },
+  validationSchema: toTypedSchema(props.schema as unknown as ZodType),
+  initialValues: props.initialValues,
 });
 
-const onSubmit = handleSubmit(async (values: InsertLocation) => {
+const onSubmit = handleSubmit(async (values: T) => {
   try {
     submitError.value = '';
     loading.value = true;
