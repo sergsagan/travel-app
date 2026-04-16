@@ -7,6 +7,7 @@ import type { InsertLocation } from '~/lib/db/schema';
 
 import db from '~/lib/db';
 import { location } from '~/lib/db/schema';
+import {z} from "zod";
 
 type Location = InferSelectModel<typeof location>;
 const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 5);
@@ -74,6 +75,13 @@ export async function insertLocation(insertable: InsertLocation, slug: string, u
 
   return created[0];
 }
+
+export const insertLocationSchema = z.object({
+  name: z.string(),
+  description: z.string().nullable(),
+  lat: z.number(),
+  long: z.number(),
+});
 
 export async function updateLocationBySlug(updates: InsertLocation, slug: string, userId: number): Promise<Location> {
     const updated = await db.update(location).set(updates).where(and(

@@ -25,7 +25,7 @@ export const locationRelations = relations(location, ({many}) => ({
   locationLogs: many(locationLog)
 }));
 
-export const InsertLocation = createInsertSchema(location, {
+export const InsertLocationSchema = createInsertSchema(location, {
   name: field => field.min(1).max(100),
   description: field => field.max(1000),
   lat: field => field.min(-90).max(90),
@@ -39,7 +39,7 @@ export const InsertLocation = createInsertSchema(location, {
 });
 
 // @ts-expect-error -- drizzle/libsql error typing
-export type InsertLocation = z.infer<typeof InsertLocation>;
+export type InsertLocation = z.infer<typeof InsertLocationSchema>;
 export type SelectLocation = typeof location.$inferSelect;
 export type SelectLocationWithLogs = SelectLocation & {
   locationLogs: SelectLocationLog[];
