@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import LocationBaseForm from "~/components/locationBaseForm.vue";
 import type { InsertLocation } from "~/lib/db/schema";
 
 const locationStore = useLocationStore();
