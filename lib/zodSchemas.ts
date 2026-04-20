@@ -5,3 +5,22 @@ export const SearchSchema = z.object({
 });
 
 export type SearchSchema = z.infer<typeof SearchSchema>;
+
+export const LocationFormSchema = z.object({
+    name: z.string().min(1).max(100),
+    description: z.string().max(1000).nullable().optional(),
+    lat: z.number().min(-90).max(90),
+    long: z.number().min(-180).max(180),
+});
+
+export const LocationLogFormSchema = LocationFormSchema.extend({
+    startedAt: z.number(),
+    endedAt: z.number(),
+});
+
+export const locationValidation = {
+    name: (schema: any) => schema.min(1).max(100),
+    description: (schema: any) => schema.max(1000),
+    lat: (schema: any) => schema.min(-90).max(90),
+    long: (schema: any) => schema.min(-180).max(180),
+};

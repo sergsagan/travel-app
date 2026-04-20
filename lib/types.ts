@@ -1,5 +1,6 @@
 import type { UserWithId } from '~/lib/auth';
 import type {RouteLocationRaw} from "vue-router";
+import type { ZodType } from "zod";
 
 declare module 'h3' {
   interface H3EventContext {
@@ -35,4 +36,11 @@ export type NominatimResult = {
     name: string;
     display_name: string;
     boundingbox: string[];
+}
+
+export type FormValues = {
+    name: string
+    description?: string
+    lat: number
+    long: number
 }
