@@ -9,8 +9,6 @@ const props = defineProps<{
   disabled?: boolean;
 }>();
 
-const { handleBlur, handleChange } = useField<number>(props.name, { initialValue: props.value });
-
 defineOptions({
   inheritAttrs: false
 });
@@ -28,7 +26,7 @@ defineOptions({
           :name="field.name"
           :value="toDateTimeLocal(value)"
           @input="e => field.onChange(fromDateTimeLocal((e.target as HTMLInputElement).value))"
-          @blur="handleBlur"
+          @blur="field.onBlur"
           :disabled="props.disabled"
           class="input w-full"
           :class="{ 'input-error': props.error }"

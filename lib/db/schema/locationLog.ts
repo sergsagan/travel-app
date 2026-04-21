@@ -27,6 +27,19 @@ export const InsertLocationSchemaLog = createInsertSchema(locationLog, locationV
   locationId: true,
   createdAt: true,
   updatedAt: true,
+}).superRefine((values, context) => {
+  if (values.startedAt > values.endedAt) {
+    context.addIssue({
+      code: 'custom',
+      message: 'Start date must be before end date',
+      path: ['startedAt']
+    });
+    context.addIssue({
+      code: 'custom',
+      message: 'End date must be after start date',
+      path: ['endedAt']
+    });
+  }
 });
 
 export const locationLogRelations = relations(locationLog, ({ one }) => ({

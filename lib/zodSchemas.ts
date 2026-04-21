@@ -16,6 +16,19 @@ export const LocationFormSchema = z.object({
 export const LocationLogFormSchema = LocationFormSchema.extend({
     startedAt: z.number(),
     endedAt: z.number(),
+}).superRefine((values, context) => {
+    if (values.startedAt > values.endedAt) {
+        context.addIssue({
+            code: "custom",
+            message: "Start date must be before end date",
+            path: ["startedAt"],
+        });
+        context.addIssue({
+            code: "custom",
+            message: "End date must be after start date",
+            path: ["endedAt"],
+        });
+    }
 });
 
 export const locationValidation = {
