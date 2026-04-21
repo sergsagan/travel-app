@@ -12,11 +12,11 @@ const showMap = ref(false)
 const { currentLocation, currentLocationStatus } = storeToRefs(locationsStore);
 
 if (LOCATION_PAGES.has(route.name?.toString() ?? '')) {
-  locationsStore.refreshLocations();
+  await locationsStore.refreshLocations();
 }
 
 if (CURRENT_LOCATION_PAGES.has(route.name?.toString() ?? '')) {
-  locationsStore.refreshCurrentLocation();
+  await locationsStore.refreshCurrentLocation();
 }
 
 onMounted(() => {
@@ -28,9 +28,9 @@ onMounted(() => {
 });
 
 onMounted(() => {
-  requestIdleCallback(() => {
+  setTimeout(() => {
     showMap.value = true
-  })
+  }, 1200)
 })
 
 watchEffect(() => {

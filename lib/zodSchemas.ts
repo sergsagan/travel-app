@@ -19,8 +19,8 @@ export const LocationLogFormSchema = LocationFormSchema.extend({
 });
 
 export const locationValidation = {
-    name: (schema: any) => schema.min(1).max(100),
-    description: (schema: any) => schema.max(1000),
-    lat: (schema: any) => schema.min(-90).max(90),
-    long: (schema: any) => schema.min(-180).max(180),
+    name: (schema: z.ZodString) => schema.min(1).max(100),
+    description: (schema: z.ZodString) => schema.max(1000),
+    lat: (schema: z.ZodNumber) => schema.min(-90).max(90),
+    long: (schema: z.ZodNumber) => schema.min(-180).max(180),
 };

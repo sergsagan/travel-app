@@ -18,7 +18,7 @@ onMounted(() => {
       >
         <div v-if="authStore.user.image" class="avatar">
           <div class="w-8 rounded-full">
-            <img :src="authStore.user.image" :alt="authStore.user.name">
+            <img :src="authStore.user.image" :alt="authStore.user.name" width="40" height="40" class="w-10 h-10 rounded-full">
           </div>
         </div>
         {{ authStore.user.name }}

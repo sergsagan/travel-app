@@ -10,8 +10,8 @@ const isDark = computed({
 </script>
 
 <template>
-  <label for="check" class="swap swap-rotate mx-4">
-    <input v-model="isDark" type="checkbox" id="check">
+  <label for="theme-toggle" class="swap swap-rotate mx-4">
+    <input v-model="isDark" type="checkbox" id="theme-toggle" aria-label="Toggle dark mode" />
 
     <Icon
       class="swap-on"

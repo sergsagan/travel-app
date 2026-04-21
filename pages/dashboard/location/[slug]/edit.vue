@@ -25,6 +25,7 @@ function onSubmitComplete() {
       :onSubmit
       :onSubmitComplete
       :initialValues="locationStore.currentLocation"
+      :zoom="12"
       submitLabel="Update Location"
       submitIcon="tabler:map-pin-up"
   />

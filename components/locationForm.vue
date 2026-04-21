@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import FormField from "~/components/app/formField.vue";
-import {type InsertLocation, InsertLocationSchema} from "~/lib/db/schema/location";
+import type { InsertLocation } from "~/lib/db/schema/location";
 import { CENTER_EUROPE } from "~/lib/constants";
 import LocationBaseForm from "~/components/locationBaseForm.vue";
-import type { ZodTypeAny } from "zod";
+import { LocationFormSchema } from "~/lib/zodSchemas";
 
 const props = defineProps<{
   initialValues?: InsertLocation;
@@ -11,14 +11,16 @@ const props = defineProps<{
   onSubmitComplete: () => void;
   submitLabel: string;
   submitIcon: string;
+  zoom?: number;
 }>();
 
-const schema = InsertLocationSchema as unknown as ZodTypeAny;
+const schema = LocationFormSchema;
 </script>
 
 <template>
 <LocationBaseForm
     v-slot="{ errors, loading }"
+    :zoom="props.zoom || 6"
     :schema="schema"
     :initial-values="props.initialValues ||
     { name: '',
@@ -32,14 +34,14 @@ const schema = InsertLocationSchema as unknown as ZodTypeAny;
     :submitIcon
 >
   <FormField
-      label="Location Name"
+      label="Location Name:"
       name="name"
       type="text"
       :error="errors.name"
       :disabled="loading"
   />
   <FormField
-      label="Description"
+      label="Description:"
       name="description"
       type="textarea"
       :error="errors.description"

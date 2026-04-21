@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div class="navbar bg-primary text-primary-content">
+  <div class="navbar bg-primary text-white">
     <div class="navbar-start">
       <NuxtLink to="/" class="text-xl">
         Travel App

@@ -4,7 +4,7 @@ import { location } from './location';
 import { relations } from "drizzle-orm";
 import {createInsertSchema} from "drizzle-zod";
 import { z } from "zod";
-import {locationValidation} from "~/lib/zodSchemas";
+import { locationValidation } from "~/lib/zodSchemas";
 
 export const locationLog = sqliteTable('locationLog', {
   id: int().primaryKey({ autoIncrement: true }),

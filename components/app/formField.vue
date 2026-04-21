@@ -13,13 +13,26 @@ const props = defineProps<{
     <legend class="fieldset-legend">
       {{ props.label }}
     </legend>
-    <Field
-      :type="props.type"
-      :name="props.name"
-      :disabled="props.disabled"
-      class="w-full"
-      :class="{ 'input-error': props.error, 'input': props.type === 'text' || props.type === 'number', 'textarea': props.type === 'textarea' }"
-    />
+    <Field :name="props.name" v-slot="{ field }">
+      <!-- text / number -->
+      <input
+          v-if="props.type === 'text' || props.type === 'number'"
+          :type="props.type"
+          v-bind="field"
+          :disabled="props.disabled"
+          class="input w-full"
+          :class="{ 'input-error': props.error }"
+      />
+
+      <!-- textarea -->
+      <textarea
+          v-else
+          v-bind="field"
+          :disabled="props.disabled"
+          class="textarea w-full h-36"
+          :class="{ 'textarea-error': props.error }"
+      />
+    </Field>
     <p v-if="props.error" class="fieldset-label text-error">
       {{ props.error }}
     </p>

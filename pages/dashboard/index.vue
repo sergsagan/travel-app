@@ -3,9 +3,8 @@ const locationsStore = useLocationStore();
 const mapStore = useMapStore();
 const { locations, locationsStatus: status } = storeToRefs(locationsStore);
 
-onMounted(() => {
-  locationsStore.refreshLocations();
-});
+await locationsStore.refreshLocations()
+
 </script>
 
 <template>

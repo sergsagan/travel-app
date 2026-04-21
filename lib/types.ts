@@ -43,4 +43,6 @@ export type FormValues = {
     description?: string
     lat: number
     long: number
+    startedAt?: number
+    endedAt?: number
 }
