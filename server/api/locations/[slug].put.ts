@@ -1,11 +1,11 @@
 import { findLocationByName, updateLocationBySlug } from '~/lib/db/queries/location';
 import defineAuthenticatedEventHandler from '~/utils/defineAuthenticatedEventHandler';
-import { InsertLocation } from "~/lib/db/schema";
+import { InsertLocationSchema } from "~/lib/db/schema";
 import sendZodError from "~/utils/sendZodError";
 
 export default defineAuthenticatedEventHandler(async (event) => {
     const slug = getRouterParam(event,  'slug') as string;
-    const result = await readValidatedBody(event, InsertLocation.safeParse);
+    const result = await readValidatedBody(event, InsertLocationSchema.safeParse);
 
     if (!result.success) {
         return sendZodError(event, result.error);

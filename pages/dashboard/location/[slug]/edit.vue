@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import LocationForm from "~/components/locationForm.vue";
 import type { InsertLocation } from "~/lib/db/schema";
 
 const locationStore = useLocationStore();
@@ -26,6 +25,7 @@ function onSubmitComplete() {
       :onSubmit
       :onSubmitComplete
       :initialValues="locationStore.currentLocation"
+      :zoom="12"
       submitLabel="Update Location"
       submitIcon="tabler:map-pin-up"
   />

@@ -1,13 +1,29 @@
 @import 'tailwindcss';
 
 @plugin "daisyui" {
-  themes:
-    light --default,
-    dark --prefersdark;
+  themes: light, dark;
 }
 
 .maplibregl-popup-close-button {
   @apply px-2;
+}
+
+.maplibregl-marker {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.line-clamp-4 {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  content-visibility: auto;
+  contain-intrinsic-size: 120px;
 }
 
 html[data-theme="dark"] {

@@ -1,11 +1,17 @@
 <script setup lang="ts">
+import { Field } from 'vee-validate';
+import { toDateTimeLocal, fromDateTimeLocal } from '~/utils/date';
+
 const props = defineProps<{
   label: string;
   name: string;
-  type: 'text' | 'textarea' | 'number';
   error?: string;
   disabled?: boolean;
 }>();
+
+defineOptions({
+  inheritAttrs: false
+});
 </script>
 
 <template>
@@ -13,26 +19,20 @@ const props = defineProps<{
     <legend class="fieldset-legend">
       {{ props.label }}
     </legend>
-    <Field :name="props.name" v-slot="{ field }">
-      <!-- text / number -->
+
+    <Field :name="props.name" v-slot="{ field, value }">
       <input
-          v-if="props.type === 'text' || props.type === 'number'"
-          :type="props.type"
-          v-bind="field"
+          type="datetime-local"
+          :name="field.name"
+          :value="toDateTimeLocal(value)"
+          @input="e => field.onChange(fromDateTimeLocal((e.target as HTMLInputElement).value))"
+          @blur="field.onBlur"
           :disabled="props.disabled"
           class="input w-full"
           :class="{ 'input-error': props.error }"
       />
-
-      <!-- textarea -->
-      <textarea
-          v-else
-          v-bind="field"
-          :disabled="props.disabled"
-          class="textarea w-full h-36"
-          :class="{ 'textarea-error': props.error }"
-      />
     </Field>
+
     <p v-if="props.error" class="fieldset-label text-error">
       {{ props.error }}
     </p>

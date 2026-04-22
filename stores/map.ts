@@ -24,7 +24,7 @@ export const useMapStore = defineStore('useMapStore', () => {
           ? mapPointsById.value.get(selectedPointId.value) ?? null
           : null
   )
-  const newPoint = ref<MapPoint & { centerMap?: boolean} | null>(null);
+  const newPoint = ref<MapPoint & { centerMap?: boolean; zoom?: number } | null>(null);
   const shouldFlyTo= ref(true);
 
   function selectedPointWithFlyTo(point: MapPoint | null) {
@@ -53,12 +53,21 @@ export const useMapStore = defineStore('useMapStore', () => {
     const padding = 60;
 
     const stopBoundsWatcher = watch(mapPoints, (points) => {
-      const firstPoint = points.find(isValidCoord)
+      const validPoints = points.filter(isValidCoord);
+
+      const firstPoint = validPoints[0];
 
       if (!firstPoint) {
         bounds.value = null;
         return;
       }
+
+      if (validPoints.length === 1) {
+        bounds.value = null;
+        return;
+      }
+
+
 
       bounds.value = points.reduce((computedBounds, point) => {
         if (!isValidCoord(point)) return computedBounds;
@@ -69,6 +78,7 @@ export const useMapStore = defineStore('useMapStore', () => {
 
     const stopSelectionWatcher = watchEffect(() => {
         if (newPoint.value) return;
+
         if (selectedPoint.value && isValidCoord(selectedPoint.value)) {
           if (shouldFlyTo.value) {
             map.map?.flyTo({
@@ -91,7 +101,7 @@ export const useMapStore = defineStore('useMapStore', () => {
         map.map?.flyTo({
             center: [newValue.long, newValue.lat],
             speed: 0.5,
-            zoom: 6,
+            zoom: newValue.zoom || 6,
         })
       }
     }, { immediate: true });

@@ -9,6 +9,7 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   experimental: {
     serverAppConfig: false,
+    payloadExtraction: true
   },
   modules: [
     '@nuxt/eslint',
@@ -27,13 +28,26 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss() as any],
     optimizeDeps: {
-      include: ['maplibre-gl'],
+      include: [
+        'maplibre-gl',
+        'better-auth/vue',
+        '@indoorequal/vue-maplibre-gl',
+        'drizzle-orm/sqlite-core',
+        'drizzle-zod',
+        'drizzle-orm',
+        'zod',
+        '@vee-validate/zod'
+      ]
+    },
+    build: {
+      cssCodeSplit: false,
     },
   },
   colorMode: {
     dataValue: 'theme',
   },
   nitro: {
+    compressPublicAssets: true,
     watchOptions: {
       ignored: [
         '**/node_modules/**',

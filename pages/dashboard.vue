@@ -8,6 +8,7 @@ const route = useRoute();
 const sidebarStore = useSidebarStore();
 const locationsStore = useLocationStore();
 const mapStore = useMapStore();
+const showMap = ref(false)
 const { currentLocation, currentLocationStatus } = storeToRefs(locationsStore);
 
 if (LOCATION_PAGES.has(route.name?.toString() ?? '')) {
@@ -25,6 +26,12 @@ onMounted(() => {
   }
   ready.value = true;
 });
+
+onMounted(() => {
+  setTimeout(() => {
+    showMap.value = true
+  }, 1200)
+})
 
 watchEffect(() => {
   if (LOCATION_PAGES.has(route.name?.toString() ?? '')) {
@@ -155,7 +162,9 @@ function toggleSidebar() {
       >
         <NuxtPage :class="{'w-96': EDIT_PAGES.has(route.name?.toString() ?? '')}" />
         <div class="flex-1 p-2">
-          <AppMap />
+          <ClientOnly>
+            <AppMap v-if="showMap" />
+          </ClientOnly>
         </div>
       </div>
     </div>

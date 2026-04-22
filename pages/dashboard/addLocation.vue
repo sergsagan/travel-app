@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import LocationForm from "~/components/locationForm.vue";
 import type { InsertLocation } from "~/lib/db/schema";
 
 const { getCsrfHeaders } = useCsrfHeaders();

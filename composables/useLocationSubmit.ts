@@ -1,11 +1,10 @@
-import type { FetchError } from 'ofetch';
-import type { InsertLocation } from '~/lib/db/schema';
+// no external types needed here after ensuring we throw Error objects
 
 type LocationSubmitMethod = 'post' | 'put';
 type CsrfHeadersGetter = () => Record<string, string>;
 
 export function useLocationSubmit(getCsrfHeaders: CsrfHeadersGetter) {
-  async function submitLocation(url: string, method: LocationSubmitMethod, values: InsertLocation) {
+  async function submitLocation<T extends Record<string, unknown>>(url: string, method: LocationSubmitMethod, values: T) {
     try {
       await $fetch(url, {
         method,
@@ -14,12 +13,14 @@ export function useLocationSubmit(getCsrfHeaders: CsrfHeadersGetter) {
           'Content-Type': 'application/json',
           ...getCsrfHeaders(),
         },
-        body: JSON.stringify(values),
+        body: values,
       });
     }
     catch (e) {
-      const error = e as FetchError;
-      console.error(error);
+      if (e instanceof Error) {
+        throw e;
+      }
+      throw new Error(String(e));
     }
   }
 

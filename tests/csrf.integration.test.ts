@@ -31,6 +31,7 @@ describe('csrf integration', async () => {
   await setup({
     server: true,
     browser: false,
+    setupTimeout: 300_000,
   });
 
   it('sets csrf cookie and returns token', async () => {

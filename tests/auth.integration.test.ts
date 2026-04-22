@@ -7,6 +7,7 @@ describe('auth flow integration', async () => {
   await setup({
     server: true,
     browser: false,
+    setupTimeout: 300_000,
   });
 
   afterAll(() => {

@@ -74,7 +74,7 @@ onBeforeRouteUpdate((to, from) => {
           <div tabindex="0" role="button" class="btn btn-sm m-1 p-0">
             <Icon name="tabler:dots-vertical" size="20" />
           </div>
-          <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+          <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
             <li>
               <NuxtLink @click="openDialog">
                 Delete
@@ -95,10 +95,13 @@ onBeforeRouteUpdate((to, from) => {
         <p class="text-sm italic">
           Add a location log to get started
         </p>
-        <button class="btn btn-primary mt-2">
+        <NuxtLink
+            :to="{ name: 'dashboard-location-slug-add', params:{ slug: route.params.slug }}"
+            class="btn btn-primary mt-2"
+        >
           Add Location Log
           <Icon name="tabler:map-pin-plus" size="24" />
-        </button>
+        </NuxtLink>
       </div>
     </div>
     <div v-if="route.name !== 'dashboard-location-slug'" class="mt-4">
