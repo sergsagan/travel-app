@@ -1,3 +1,5 @@
+import daisyui from 'daisyui';
+
 export default {
     content: [
         './components/**/*.{vue,js,ts}',
@@ -6,7 +8,7 @@ export default {
         './app.vue',
         './plugins/**/*.{js,ts}',
     ],
-    plugins: [require("daisyui")],
+    plugins: [daisyui],
     daisyui: {
         themes: [
             {
