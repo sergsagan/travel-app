@@ -12,9 +12,22 @@ function hasSlug(x: unknown): x is { slug: string } {
   return !!x && typeof (x as Record<string, unknown>).slug === 'string';
 }
 
+function hasValidTo(to: unknown) {
+  if (!to || typeof to !== 'object') return false;
+  const t = to as Record<string, any>;
+  if (!t.params) return true;
+  try {
+    const vals = Object.values(t.params);
+    return vals.every(v => v !== undefined && v !== null);
+  }
+  catch (e) {
+    return false;
+  }
+}
+
 const linkTo = computed<RouteLocationRaw | string>(() => {
   const mp = props.mapPoint;
-  if (mp?.to) return mp.to as RouteLocationRaw;
+  if (mp?.to && hasValidTo(mp.to)) return mp.to as RouteLocationRaw;
   if (hasSlug(mp)) return { name: 'dashboard-location-slug', params: { slug: mp.slug } };
   return '/';
 });

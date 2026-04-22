@@ -83,10 +83,18 @@ onBeforeRouteUpdate((to, from) => {
               </NuxtLink>
             </li>
             <li>
-              <NuxtLink :to="{name: 'dashboard-location-slug-edit', params: { slug: location?.slug ?? '' }}">
-                Edit
-                <Icon name="tabler:map-pin-cog" size="20" />
-              </NuxtLink>
+              <template v-if="location?.slug">
+                <NuxtLink :to="{ name: 'dashboard-location-slug-edit', params: { slug: location.slug } }">
+                  Edit
+                  <Icon name="tabler:map-pin-cog" size="20" />
+                </NuxtLink>
+              </template>
+              <template v-else>
+                <button class="btn btn-sm btn-ghost opacity-50 cursor-not-allowed">
+                  Edit
+                  <Icon name="tabler:map-pin-cog" size="20" />
+                </button>
+              </template>
             </li>
           </ul>
         </div>
@@ -97,17 +105,22 @@ onBeforeRouteUpdate((to, from) => {
           Add a location log to get started
         </p>
         <NuxtLink
-            :to="{ name: 'dashboard-location-slug-add', params:{ slug: String(route.params.slug || '') }}"
+            v-if="location?.slug"
+            :to="{ name: 'dashboard-location-slug-add', params:{ slug: location.slug }}"
             class="btn btn-primary mt-2"
         >
           Add Location Log
           <Icon name="tabler:map-pin-plus" size="24" />
         </NuxtLink>
+        <button v-else class="btn btn-primary mt-2 opacity-50 cursor-not-allowed">
+          Add Location Log
+          <Icon name="tabler:map-pin-plus" size="24" />
+        </button>
       </div>
     </div>
     <div v-if="(location?.locationLogs?.length ?? 0) > 0" class="location-list">
       <LocationCard
-          v-for="log in location.locationLogs"
+          v-for="log in (location?.locationLogs || [])"
           :key="log.id"
           :map-point="createMapPointFromLocationLog(log, location?.slug)"
       />

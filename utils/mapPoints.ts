@@ -12,7 +12,7 @@ export function createMapPointFromLocation(location: SelectLocation): MapPoint {
 export function createMapPointFromLocationLog(locationLog: SelectLocationLog, parentSlug?: string): MapPoint {
     const to = parentSlug
         ? { name: 'dashboard-location-slug-id', params: { slug: parentSlug, id: locationLog.id } }
-        : { name: 'dashboard-location-slug-id', params: { id: locationLog.id } };
+        : undefined;
 
     return {
         ...locationLog,

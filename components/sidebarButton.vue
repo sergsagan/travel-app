@@ -11,6 +11,21 @@ const props = defineProps<{
 }>();
 const route = useRoute();
 
+function hasValidTo(to: unknown) {
+  if (!to) return false;
+  if (typeof to === 'string') return true;
+  if (typeof to !== 'object') return false;
+  const t = to as Record<string, any>;
+  if (!t.params) return true;
+  try {
+    const vals = Object.values(t.params);
+    return vals.every(v => v !== undefined && v !== null && v !== '');
+  }
+  catch (e) {
+    return false;
+  }
+}
+
 const isActive = computed(() => {
   if (props.href) {
     return route.path === props.href
@@ -41,7 +56,7 @@ const isActive = computed(() => {
     :class="{ tooltip: !showLabel }"
   >
     <NuxtLink
-        v-if="props.to && props.label"
+        v-if="props.to && props.label && hasValidTo(props.to)"
         :to="props.to"
         class="flex gap-2 p-2 hover:bg-base-200 flex-nowrap"
         :class="{
