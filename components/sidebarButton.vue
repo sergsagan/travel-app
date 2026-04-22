@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { RouteLocationRaw } from "vue-router";
+import { hasValidTo } from '~/utils/link';
 
 const props = defineProps<{
   label?: string;
@@ -10,21 +11,6 @@ const props = defineProps<{
   iconColor?: 'text-primary' | 'text-secondary' | 'text-accent';
 }>();
 const route = useRoute();
-
-function hasValidTo(to: unknown) {
-  if (!to) return false;
-  if (typeof to === 'string') return true;
-  if (typeof to !== 'object') return false;
-  const t = to as Record<string, any>;
-  if (!t.params) return true;
-  try {
-    const vals = Object.values(t.params);
-    return vals.every(v => v !== undefined && v !== null && v !== '');
-  }
-  catch (e) {
-    return false;
-  }
-}
 
 const isActive = computed(() => {
   if (props.href) {
