@@ -57,7 +57,7 @@ function setLocation(result: NominatimResult) {
       <div class="join">
         <div>
           <label for="" class="input join-item">
-            <Icon name="tabler: search" />
+            <Icon name="tabler:search" size="20" />
             <Field
                 type="text"
                 name="q"
@@ -110,7 +110,7 @@ function setLocation(result: NominatimResult) {
           <div class="justify-end card-actions">
             <button class="btn btn-warning btm-sm" @click="setLocation(result)">
               Set Location
-              <Icon name="tabler: map-pin-share" size="20" />
+              <Icon name="tabler:map-pin-share" size="20" />
             </button>
           </div>
         </div>

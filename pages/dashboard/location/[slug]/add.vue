@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import type {InsertLocationLog} from "~/lib/db/schema";
+import type { InsertLocationLog } from "~/lib/db/schema";
 import { CENTER_EUROPE } from "~/lib/constants";
 const route = useRoute();
 const { currentLocation } = useLocationStore();
 
+const { getCsrfHeaders } = useCsrfHeaders();
+const { submitLocation } = useLocationSubmit(getCsrfHeaders);
+
 async function onSubmit(values: InsertLocationLog) {
-  console.log(values);
+  await submitLocation(`/api/locations/${route.params.slug}/add`, 'post', values);
 }
 
 function submitComplete() {
