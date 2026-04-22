@@ -1,9 +1,16 @@
 <script setup lang="ts">
+import {createMapPointFromLocation} from "~/utils/mapPoints";
+import { computed } from 'vue';
+
 const locationsStore = useLocationStore();
 const mapStore = useMapStore();
 const { locations, locationsStatus: status } = storeToRefs(locationsStore);
 
 await locationsStore.refreshLocations()
+
+const mappedLocations = computed(() => {
+  return (locations.value || []).map((loc: any) => createMapPointFromLocation(loc));
+});
 
 </script>
 
@@ -15,23 +22,12 @@ await locationsStore.refreshLocations()
     <div v-if="status === 'pending'">
       <span class="loading loading-spinner loading-xl" />
     </div>
-    <div v-else-if="locations && locations.length > 0" class="flex flex-nowrap gap-2 mt-4 overflow-auto">
-      <NuxtLink
-        v-for="location in locations"
-        :key="location.id"
-        :to="{ name: 'dashboard-location-slug', params: { slug: location.slug } }"
-        class="card card-compact bg-base-200 border-2 h-40 w-72 mb-4 shrink-0 hover:cursor-pointer transition-colors"
-        :class="location.id === mapStore.selectedPointId ? 'border-primary' : 'border-transparent'"
-        @mouseenter="mapStore.selectedPointId = location.id"
-        @mouseleave="mapStore.selectedPointId = null"
-      >
-        <div class="card-body">
-          <h3 class="text-xl truncate">
-            {{ location.name }}
-          </h3>
-          <p class="line-clamp-4 wrap-break-word">{{ location.description }}</p>
-        </div>
-      </NuxtLink>
+    <div v-else-if="locations && locations.length > 0" class="location-list">
+      <LocationCard
+        v-for="mp in mappedLocations"
+        :key="mp.id"
+        :map-point="mp"
+      />
     </div>
     <div v-else class="flex flex-col gap-2 mt-4">
       <p>Add location to get started</p>

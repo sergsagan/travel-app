@@ -1,6 +1,7 @@
 import { useMapStore } from '~/stores/map';
 import type { MapPoint } from "~/lib/types";
-import type { SelectLocationWithLogs } from "~/lib/db/schema";
+import type { SelectLocation, SelectLocationWithLogs } from "~/lib/db/schema";
+import { createMapPointFromLocation } from '~/utils/mapPoints';
 import { CURRENT_LOCATION_PAGES, LOCATION_PAGES } from "~/lib/constants";
 
 export const useLocationStore = defineStore('useLocationStore', () => {
@@ -9,7 +10,7 @@ export const useLocationStore = defineStore('useLocationStore', () => {
     data: locations,
     status: locationsStatus,
     refresh: refreshLocations
-  } = useFetch('/api/locations', {
+  } = useFetch<SelectLocation[]>('/api/locations', {
     lazy: true,
   });
 
@@ -48,11 +49,11 @@ export const useLocationStore = defineStore('useLocationStore', () => {
           id: `location-${location.id}`,
           label: location.name,
           icon: 'tabler:map-pin-filled',
-          to: { name: 'dashboard-location-slug', params: { slug: location.slug }},
+          to: mapPoint.to,
           mapPoint,
         });
         mapPoints.push(mapPoint);
-      })
+      });
 
       sidebarStore.sidebarItems = sidebarItems;
       mapStore.mapPoints = mapPoints;

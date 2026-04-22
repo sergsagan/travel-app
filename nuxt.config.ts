@@ -1,5 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from '@tailwindcss/vite';
+import type { Plugin } from 'vite';
+const tailwindVitePlugin = tailwindcss();
 import process from 'node:process';
 
 import './lib/env';
@@ -26,7 +28,7 @@ export default defineNuxtConfig({
     },
   },
   vite: {
-    plugins: [tailwindcss() as any],
+    plugins: tailwindVitePlugin as unknown as Plugin[],
     optimizeDeps: {
       include: [
         'maplibre-gl',

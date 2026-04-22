@@ -35,7 +35,6 @@ export default withNuxt(
         'no-console': 'warn',
         'antfu/no-top-level-await': 'off',
 
-        // ❗ суворо забороняємо process.env за замовчуванням
         'node/no-process-env': 'error',
 
         'perfectionist/sort-imports': [
@@ -52,8 +51,6 @@ export default withNuxt(
         ],
       },
     },
-
-    // 🔹 nuxt.config.ts (process.env дозволений)
     {
       files: ['nuxt.config.ts', 'lib/**/*.{ts,js}'],
       rules: {

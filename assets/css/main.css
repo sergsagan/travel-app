@@ -4,6 +4,10 @@
   themes: light, dark;
 }
 
+.location-list {
+  @apply flex flex-nowrap gap-2 mt-4 overflow-auto
+}
+
 .maplibregl-popup-close-button {
   @apply px-2;
 }

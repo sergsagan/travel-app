@@ -54,14 +54,14 @@ const defaultInitialValues: InsertLocationLog = {
     <DateField
         label="Start date & time:"
         name="startedAt"
-        :value="initialValues.startedAt"
+        :value="(props.initialValues || defaultInitialValues).startedAt"
         :error="errors.startedAt"
         :disabled="loading"
     />
     <DateField
         label="End date & time:"
         name="endedAt"
-        :value="initialValues.endedAt"
+        :value="(props.initialValues || defaultInitialValues).endedAt"
         :error="errors.endedAt"
         :disabled="loading"
     />
