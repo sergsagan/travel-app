@@ -1,4 +1,4 @@
-import type {SelectLocation, SelectLocationLog} from "~/lib/db/schema";
+import type { SelectLocation, SelectLocationLog } from "~/lib/db/schema";
 import type { MapPoint } from "~/lib/types";
 
 export function createMapPointFromLocation(location: SelectLocation): MapPoint {

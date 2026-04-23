@@ -2,16 +2,12 @@
 import type { MapPoint } from "~/lib/types";
 import { computed } from 'vue';
 import type { RouteLocationRaw } from 'vue-router';
-import { hasValidTo } from '~/utils/link';
+import { hasSlug, hasValidTo } from '~/utils/link';
 
 const mapStore = useMapStore();
 const props = defineProps<{
   mapPoint: MapPoint;
 }>();
-
-function hasSlug(x: unknown): x is { slug: string } {
-  return !!x && typeof (x as Record<string, unknown>).slug === 'string';
-}
 
 const linkTo = computed<RouteLocationRaw | string>(() => {
   const mp = props.mapPoint;
@@ -34,7 +30,7 @@ const linkTo = computed<RouteLocationRaw | string>(() => {
       <h3 class="text-xl truncate">
         {{ props.mapPoint?.name }}
       </h3>
-          <p class="line-clamp-4 wrap-break-word">{{ props.mapPoint?.description }}</p>
+      <p class="line-clamp-4 wrap-break-word">{{ props.mapPoint?.description }}</p>
     </div>
   </NuxtLink>
   <div v-else class="card card-compact bg-base-200 border-2 h-40 w-72 mb-4 shrink-0" />
