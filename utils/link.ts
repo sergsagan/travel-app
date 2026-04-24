@@ -12,7 +12,7 @@ export function hasValidTo(to: unknown): boolean {
     const vals = Object.values(t.params);
     return vals.every(v => v !== undefined && v !== null && v !== '');
   }
-  catch (e) {
+  catch {
     return false;
   }
 }
