@@ -3,6 +3,7 @@ import { CURRENT_LOCATION_PAGES } from '~/lib/constants';
 import AppDialog from "~/components/app/appDialog.vue";
 import type { FetchError } from 'ofetch';
 import { createMapPointFromLocationLog } from "~/utils/mapPoints";
+import { toDateTimeLocal } from '~/utils/date';
 
 const route = useRoute();
 const locationsStore = useLocationStore();
@@ -111,7 +112,18 @@ onBeforeRouteUpdate((to, from) => {
           v-for="log in location?.locationLogs"
           :key="log.id"
           :map-point="createMapPointFromLocationLog(log, location?.slug)"
-      />
+      >
+        <template v-slot:top>
+          <p class="text-small italic text-gray-500">
+            <span v-if="log.startedAt !== log.endedAt">
+              {{ toDateTimeLocal(log.startedAt) }} / {{ toDateTimeLocal(log.endedAt) }}
+            </span>
+            <span v-else>
+              {{ toDateTimeLocal(log.startedAt) }}
+            </span>
+          </p>
+        </template>
+      </LocationCard>
     </div>
     <div v-if="route.name !== 'dashboard-location-slug'" class="mt-4">
       <NuxtPage />

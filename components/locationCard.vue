@@ -21,12 +21,13 @@ const linkTo = computed<RouteLocationRaw | string>(() => {
   <NuxtLink
       v-if="props.mapPoint"
       :to="linkTo"
-      class="card card-compact bg-base-200 border-2 h-40 w-72 mb-4 shrink-0 hover:cursor-pointer transition-colors"
+      class="card card-compact bg-base-200 border-2 h-40 w-72 mb-4 shrink-0 hover:cursor-pointer transition-colors overflow-hidden"
       :class="(props.mapPoint?.id === mapStore.selectedPointId) ? 'border-primary' : 'border-transparent'"
       @mouseenter="mapStore.selectedPointId = props.mapPoint?.id"
       @mouseleave="mapStore.selectedPointId = null"
   >
     <div class="card-body">
+      <slot name="top" />
       <h3 class="text-xl truncate">
         {{ props.mapPoint?.name }}
       </h3>

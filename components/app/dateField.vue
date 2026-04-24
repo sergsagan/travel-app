@@ -20,9 +20,9 @@ defineOptions({
       {{ props.label }}
     </legend>
 
-    <Field :name="props.name" v-slot="{ field, value }">
+      <Field :name="props.name" v-slot="{ field, value }">
       <input
-          type="datetime-local"
+          type="date"
           :name="field.name"
           :value="toDateTimeLocal(value)"
           @input="e => field.onChange(fromDateTimeLocal((e.target as HTMLInputElement).value))"

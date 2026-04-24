@@ -20,12 +20,12 @@ export const LocationLogFormSchema = LocationFormSchema.extend({
     if (values.startedAt > values.endedAt) {
         context.addIssue({
             code: "custom",
-            message: "Start date must be before end date",
+            message: "Start date must be on or before end date",
             path: ["startedAt"],
         });
         context.addIssue({
             code: "custom",
-            message: "End date must be after start date",
+            message: "End date must be on or after start date",
             path: ["endedAt"],
         });
     }
