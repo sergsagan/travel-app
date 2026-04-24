@@ -1,9 +1,12 @@
 export function toDateTimeLocal(ts?: number) {
     if (!ts) return '';
     const date = new Date(ts);
-    return date.toLocaleString('sv-SE').slice(0, 16);
+    return date.toISOString().slice(0, 10);
 }
 
 export function fromDateTimeLocal(value: string) {
-    return new Date(value).getTime();
+    const parts = value.split('-').map(p => parseInt(p, 10));
+    if (parts.length !== 3 || parts.some(Number.isNaN)) return 0;
+    const [y, m, d] = parts as [number, number, number];
+    return new Date(y, m - 1, d).getTime();
 }

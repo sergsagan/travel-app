@@ -21,7 +21,7 @@ const defaultInitialValues: InsertLocationLog = {
   description: '',
   lat: CENTER_EUROPE[1],
   long: CENTER_EUROPE[0],
-  startedAt: Date.now() - (24 * 60 * 60 * 1000),
+  startedAt: Date.now(),
   endedAt: Date.now(),
 };
 </script>
@@ -52,16 +52,16 @@ const defaultInitialValues: InsertLocationLog = {
         :disabled="loading"
     />
     <DateField
-        label="Start date & time:"
+        label="Start date:"
         name="startedAt"
-        :value="initialValues.startedAt"
+        :value="(props.initialValues || defaultInitialValues).startedAt"
         :error="errors.startedAt"
         :disabled="loading"
     />
     <DateField
-        label="End date & time:"
+        label="End date:"
         name="endedAt"
-        :value="initialValues.endedAt"
+        :value="(props.initialValues || defaultInitialValues).endedAt"
         :error="errors.endedAt"
         :disabled="loading"
     />

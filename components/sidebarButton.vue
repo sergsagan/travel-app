@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { RouteLocationRaw } from "vue-router";
+import { hasValidTo } from '~/utils/link';
 
 const props = defineProps<{
   label?: string;
@@ -41,7 +42,7 @@ const isActive = computed(() => {
     :class="{ tooltip: !showLabel }"
   >
     <NuxtLink
-        v-if="props.to && props.label"
+        v-if="props.to && props.label && hasValidTo(props.to)"
         :to="props.to"
         class="flex gap-2 p-2 hover:bg-base-200 flex-nowrap"
         :class="{

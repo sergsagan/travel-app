@@ -56,14 +56,15 @@ watchEffect(() => {
     }];
 
     if (currentLocation.value && currentLocationStatus.value !== "pending") {
-      sidebarStore.sidebarTopItems.push({
+      const slug = String(currentLocation.value.slug || '');
+
+      if (slug) {
+        sidebarStore.sidebarTopItems.push({
         id: "link-dashboard",
         label: currentLocation.value.name,
         to: {
           name: "dashboard-location-slug",
-          params: {
-            slug: route.params.slug,
-          },
+          params: { slug },
         },
         icon: "tabler:map",
       }, {
@@ -71,9 +72,7 @@ watchEffect(() => {
         label: "Edit Location",
         to: {
           name: "dashboard-location-slug-edit",
-          params: {
-            slug: route.params.slug,
-          },
+          params: { slug },
         },
         icon: "tabler:map-pin-cog",
       }, {
@@ -81,12 +80,11 @@ watchEffect(() => {
         label: "Add Location Log",
         to: {
           name: "dashboard-location-slug-add",
-          params: {
-            slug: route.params.slug,
-          },
+          params: { slug },
         },
         icon: "tabler:circle-plus-filled",
       });
+      }
     }
   }
 })

@@ -30,7 +30,7 @@ function submitComplete() {
         description: '',
         lat: currentLocation?.lat || CENTER_EUROPE[1],
         long: currentLocation?.long || CENTER_EUROPE[0],
-        startedAt: Date.now() - (24 * 60 * 60 * 1000),
+        startedAt: Date.now(),
         endedAt: Date.now(),
       }"
   />

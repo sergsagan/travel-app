@@ -4,6 +4,14 @@
   themes: light, dark;
 }
 
+.location-list {
+  @apply flex flex-nowrap gap-2 mt-4 overflow-auto
+}
+
+.page-content-top {
+  @apply p-4 min-h-72;
+}
+
 .maplibregl-popup-close-button {
   @apply px-2;
 }

@@ -2,6 +2,8 @@
 import { CURRENT_LOCATION_PAGES } from '~/lib/constants';
 import AppDialog from "~/components/app/appDialog.vue";
 import type { FetchError } from 'ofetch';
+import { createMapPointFromLocationLog } from "~/utils/mapPoints";
+import { toDateTimeLocal } from '~/utils/date';
 
 const route = useRoute();
 const locationsStore = useLocationStore();
@@ -58,7 +60,7 @@ onBeforeRouteUpdate((to, from) => {
 </script>
 
 <template>
-  <div class="p-4 min-h-64">
+  <div class="page-content-top">
     <div v-if="loading">
       <div class="loading" />
     </div>
@@ -82,7 +84,7 @@ onBeforeRouteUpdate((to, from) => {
               </NuxtLink>
             </li>
             <li>
-              <NuxtLink :to="{name: 'dashboard-location-slug-edit', params: { slug: location.slug }}">
+              <NuxtLink v-if="location?.slug" :to="{ name: 'dashboard-location-slug-edit', params: { slug: location.slug } }">
                 Edit
                 <Icon name="tabler:map-pin-cog" size="20" />
               </NuxtLink>
@@ -96,13 +98,32 @@ onBeforeRouteUpdate((to, from) => {
           Add a location log to get started
         </p>
         <NuxtLink
-            :to="{ name: 'dashboard-location-slug-add', params:{ slug: route.params.slug }}"
+            v-if="location?.slug"
+            :to="{ name: 'dashboard-location-slug-add', params:{ slug: location.slug }}"
             class="btn btn-primary mt-2"
         >
           Add Location Log
           <Icon name="tabler:map-pin-plus" size="24" />
         </NuxtLink>
       </div>
+    </div>
+    <div v-if="route.name === 'dashboard-location-slug' && (location?.locationLogs?.length ?? 0) > 0" class="location-list">
+      <LocationCard
+          v-for="log in location?.locationLogs"
+          :key="log.id"
+          :map-point="createMapPointFromLocationLog(log, location?.slug)"
+      >
+        <template v-slot:top>
+          <p class="text-small italic text-gray-500">
+            <span v-if="log.startedAt !== log.endedAt">
+              {{ toDateTimeLocal(log.startedAt) }} / {{ toDateTimeLocal(log.endedAt) }}
+            </span>
+            <span v-else>
+              {{ toDateTimeLocal(log.startedAt) }}
+            </span>
+          </p>
+        </template>
+      </LocationCard>
     </div>
     <div v-if="route.name !== 'dashboard-location-slug'" class="mt-4">
       <NuxtPage />
