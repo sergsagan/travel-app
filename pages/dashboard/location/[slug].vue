@@ -99,7 +99,7 @@ onBeforeRouteUpdate((to, from) => {
         </p>
         <NuxtLink
             v-if="location?.slug"
-            :to="{ name: 'dashboard-location-slug-add', params:{ slug: location.slug }}"
+            :to="{ name: 'dashboard-location-slug-add', params:{ slug: location?.slug }}"
             class="btn btn-primary mt-2"
         >
           Add Location Log
@@ -107,7 +107,7 @@ onBeforeRouteUpdate((to, from) => {
         </NuxtLink>
       </div>
     </div>
-    <div v-if="route.name === 'dashboard-location-slug' && (location?.locationLogs?.length ?? 0) > 0" class="location-list">
+    <div v-if="route.name === 'dashboard-location-slug' && !loading && (location?.locationLogs?.length ?? 0) > 0" class="location-list">
       <LocationCard
           v-for="log in location?.locationLogs"
           :key="log.id"
