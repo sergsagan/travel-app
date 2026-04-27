@@ -59,12 +59,15 @@ function searchResultSelected(result: NominatimResult) {
   }
 }
 
-watch(() => mapStore.newPoint, (val) => {
-  if (val) {
-    setFieldValue('long', val.long)
-    setFieldValue('lat', val.lat)
-  }
-})
+watch(
+    () => [mapStore.newPoint?.lat, mapStore.newPoint?.long],
+    ([lat, long]) => {
+      if (lat != null && long != null) {
+        setFieldValue('lat', lat)
+        setFieldValue('long', long)
+      }
+    }
+)
 
 onMounted(() => {
   mapStore.newPoint = {
