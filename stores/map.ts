@@ -1,5 +1,6 @@
 import type { LngLatBounds } from "maplibre-gl";
 import type { MapPoint } from '~/lib/types';
+import {CENTER_EUROPE} from "~/lib/constants";
 
 export const useMapStore = defineStore('useMapStore', () => {
   const mapPoints = shallowRef<MapPoint[]>([]);
@@ -59,6 +60,10 @@ export const useMapStore = defineStore('useMapStore', () => {
 
       if (!firstPoint) {
         bounds.value = null;
+        map.map?.flyTo({
+          center: CENTER_EUROPE,
+          zoom: 2
+        })
         return;
       }
 
