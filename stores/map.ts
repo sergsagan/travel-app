@@ -72,8 +72,6 @@ export const useMapStore = defineStore('useMapStore', () => {
         return;
       }
 
-
-
       bounds.value = points.reduce((computedBounds, point) => {
         if (!isValidCoord(point)) return computedBounds;
 
