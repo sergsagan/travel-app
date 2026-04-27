@@ -28,6 +28,7 @@ export const useLocationStore = defineStore('useLocationStore', () => {
       {
         lazy: true,
         immediate: false,
+        watch: [() => route.params.slug],
       }
   )
 

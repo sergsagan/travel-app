@@ -53,7 +53,7 @@ const isActive = computed(() => {
     >
       <Icon :name="props.icon" size="24" :class="props.iconColor" />
       <Transition name="grow">
-        <span v-if="showLabel">{{ props.label || '' }}</span>
+        <span v-if="showLabel" class="truncate">{{ props.label || '' }}</span>
       </Transition>
     </NuxtLink>
     <NuxtLink
