@@ -1,7 +1,11 @@
-import type { SelectLocation, SelectLocationWithLogs } from '~/lib/db/schema';
+import type {SelectLocation, SelectLocationLog, SelectLocationWithLogs} from '~/lib/db/schema';
 import type { MapPoint } from '~/lib/types';
 
-import { CURRENT_LOCATION_PAGES, LOCATION_PAGES } from '~/lib/constants';
+import {
+  CURRENT_LOCATION_LOG_PAGES,
+  CURRENT_LOCATION_PAGES,
+  LOCATION_PAGES,
+} from '~/lib/constants';
 import { useMapStore } from '~/stores/map';
 import { createMapPointFromLocation, createMapPointFromLocationLog } from '~/utils/mapPoints';
 
@@ -32,11 +36,42 @@ export const useLocationStore = defineStore('useLocationStore', () => {
     },
   );
 
+  const {
+    data: currentLocationLog,
+    status: currentLocationLogStatus,
+    error: currentLocationLogError,
+    refresh: refreshCurrentLocationLog,
+  } = useFetch<SelectLocationLog>(
+      () => {
+        const slug = route.params.slug;
+        const id = route.params.id;
+        return `/api/locations/${slug}/${id}`;
+      },
+      {
+        lazy: true,
+        immediate: false,
+        watch: false,
+      },
+  );
+
   watch(
     () => route.params.slug,
     (slug) => {
       if (slug && typeof slug === 'string')
         void refreshCurrentLocation();
+    },
+    { immediate: true },
+  );
+
+  watch(
+    [() => route.params.slug, () => route.params.id, () => route.name],
+    ([slug, id, routeName]) => {
+      const name = routeName?.toString() ?? '';
+      const isCurrentLocationLogPage = CURRENT_LOCATION_LOG_PAGES.has(name);
+
+      if (isCurrentLocationLogPage && typeof slug === 'string' && typeof id === 'string') {
+        void refreshCurrentLocationLog();
+      }
     },
     { immediate: true },
   );
@@ -56,10 +91,12 @@ export const useLocationStore = defineStore('useLocationStore', () => {
       const routeName = route.name?.toString() || '';
       const isLocationPage = LOCATION_PAGES.has(routeName);
       const isCurrentLocationPage = CURRENT_LOCATION_PAGES.has(routeName);
+      const isCurrentLocationLogPage = CURRENT_LOCATION_LOG_PAGES.has(routeName);
+      const isLocationRelatedPage = isCurrentLocationPage || isCurrentLocationLogPage;
 
       sidebarStore.loading = isLocationPage
         ? locationsStatus.value === 'pending'
-        : isCurrentLocationPage
+        : isLocationRelatedPage
           ? currentLocationStatus.value === 'pending'
           : false;
 
@@ -93,7 +130,7 @@ export const useLocationStore = defineStore('useLocationStore', () => {
         return;
       }
 
-      if (currentLocation.value && isCurrentLocationPage) {
+      if (currentLocation.value && isLocationRelatedPage) {
         const location = currentLocation.value;
         const logs = currentLocation.value.locationLogs ?? [];
 
@@ -142,5 +179,9 @@ export const useLocationStore = defineStore('useLocationStore', () => {
     currentLocationStatus,
     currentLocationError,
     refreshCurrentLocation,
+    currentLocationLog,
+    currentLocationLogStatus,
+    currentLocationLogError,
+    refreshCurrentLocationLog,
   };
 });

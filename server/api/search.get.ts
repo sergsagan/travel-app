@@ -1,6 +1,6 @@
-import type { NominatimResult } from "~/lib/types";
+import type {NominatimResult} from "~/lib/types";
 
-import { SearchSchema } from "~/lib/zodSchemas";
+import {SearchSchema} from "~/lib/zodSchemas";
 import defineAuthenticatedEventHandler from "~/utils/defineAuthenticatedEventHandler";
 import sendZodError from "~/utils/sendZodError";
 
@@ -27,8 +27,7 @@ export default defineAuthenticatedEventHandler(
                 }));
             }
 
-            const results = await response.json() as NominatimResult[];
-            return results;
+            return await response.json() as NominatimResult[];
         }
         catch {
             return sendError(event, createError({

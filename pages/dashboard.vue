@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import SidebarButton from '~/components/sidebarButton.vue';
-import { CURRENT_LOCATION_PAGES, EDIT_PAGES, LOCATION_PAGES } from "~/lib/constants";
+import {CURRENT_LOCATION_LOG_PAGES, CURRENT_LOCATION_PAGES, EDIT_PAGES, LOCATION_PAGES} from "~/lib/constants";
 
 const isSidebarOpen = ref(true);
 const ready = ref(false);
@@ -18,6 +18,9 @@ if (LOCATION_PAGES.has(route.name?.toString() ?? '')) {
 if (CURRENT_LOCATION_PAGES.has(route.name?.toString() ?? '')) {
   await locationsStore.refreshCurrentLocation();
 }
+
+if (CURRENT_LOCATION_LOG_PAGES.has(route.name?.toString() ?? '')) {
+  await locationsStore.refreshCurrentLocationLog();}
 
 onMounted(() => {
   const saved = localStorage.getItem('isSidebarOpen');
@@ -47,7 +50,10 @@ watchEffect(() => {
       href: '/dashboard/addLocation',
       icon: 'tabler:circle-plus-filled'
     }]
-  } else if (CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")) {
+  } else if (
+    CURRENT_LOCATION_PAGES.has(route.name?.toString() || '')
+    || CURRENT_LOCATION_LOG_PAGES.has(route.name?.toString() || '')
+  ) {
     sidebarStore.sidebarTopItems = [{
       id: "link-dashboard",
       label: "Back to Locations",

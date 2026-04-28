@@ -5,7 +5,7 @@ import { createInsertSchema } from 'drizzle-zod';
 
 import { user } from '../../db/schema/auth';
 import { relations } from "drizzle-orm";
-import {locationLog, type SelectLocationLog} from "~/lib/db/schema/locationLog";
+import { locationLog, type SelectLocationLog } from "~/lib/db/schema/locationLog";
 import { locationValidation } from "~/lib/zodSchemas";
 
 export const location = sqliteTable('location', {

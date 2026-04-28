@@ -9,14 +9,10 @@ import {
   watch,
   watchEffect,
 } from 'vue';
-import { CENTER_EUROPE } from '../lib/constants';
+import { CENTER_EUROPE } from '~/lib/constants';
 
 const flyTo = vi.fn();
 const fitBounds = vi.fn();
-
-vi.mock('~/lib/constants', () => ({
-  CENTER_EUROPE,
-}));
 
 class MockLngLatBounds {
   points: Array<[number, number]> = [];
