@@ -72,7 +72,7 @@ describe('map store integration', () => {
 
     expect(flyTo).toHaveBeenCalledWith({
       center: CENTER_EUROPE,
-      zoom: 2,
+      zoom: 3,
     });
 
     store.mapPoints = [
@@ -120,7 +120,7 @@ describe('map store integration', () => {
 
     expect(flyTo).toHaveBeenCalledWith({
       center: [30.52, 50.45],
-      zoom: 6,
+      zoom: 12,
       speed: 0.5,
     });
 
@@ -148,7 +148,7 @@ describe('map store integration', () => {
 
     expect(flyTo).toHaveBeenCalledWith({
       center: [30.72, 46.48],
-      speed: 0.5,
+      speed: 0.8,
       zoom: 9,
     });
   });

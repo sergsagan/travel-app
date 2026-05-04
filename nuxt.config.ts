@@ -4,6 +4,10 @@ import type { Plugin } from 'vite';
 const tailwindVitePlugin = tailwindcss();
 import process from 'node:process';
 
+import { fileURLToPath } from 'node:url'
+
+const mockPath = fileURLToPath(new URL('./tests/mocks/drizzle.ts', import.meta.url))
+
 import './lib/env';
 
 export default defineNuxtConfig({
@@ -58,6 +62,11 @@ export default defineNuxtConfig({
         '**/local.db',
       ],
     },
+    alias: process.env.VITEST
+        ? {
+          'drizzle-orm/libsql': mockPath,
+        }
+        : {},
   },
   runtimeConfig: {
     csrfSecret: process.env.CSRF_SECRET,

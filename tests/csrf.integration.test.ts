@@ -27,12 +27,7 @@ async function getCsrfContext() {
   };
 }
 
-describe('csrf integration', async () => {
-  await setup({
-    server: true,
-    browser: false,
-    setupTimeout: 300_000,
-  });
+describe('csrf integration', () => {
 
   it('sets csrf cookie and returns token', async () => {
     const { csrfToken, csrfCookie } = await getCsrfContext();

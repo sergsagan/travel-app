@@ -12,6 +12,10 @@ export default defineConfig({
     setupFiles: ['./tests/setup.ts'],
     env: {
       NODE_ENV: 'test',
+      VITEST: 'true'
+    },
+    alias: {
+      'drizzle-orm/libsql': fileURLToPath(new URL('./tests/mocks/drizzle.ts', import.meta.url)),
     },
   },
 });
