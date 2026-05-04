@@ -1,6 +1,5 @@
 import type { UserWithId } from '~/lib/auth';
-import type {RouteLocationRaw} from "vue-router";
-import type { ZodType } from "zod";
+import type { RouteLocationRaw } from "vue-router";
 
 declare module 'h3' {
   interface H3EventContext {

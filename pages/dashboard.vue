@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import SidebarButton from '~/components/sidebarButton.vue';
-import { CURRENT_LOCATION_PAGES, EDIT_PAGES, LOCATION_PAGES } from "~/lib/constants";
+import {CURRENT_LOCATION_LOG_PAGES, CURRENT_LOCATION_PAGES, EDIT_PAGES, LOCATION_PAGES} from "~/lib/constants";
 
 const isSidebarOpen = ref(true);
 const ready = ref(false);
@@ -15,8 +15,12 @@ if (LOCATION_PAGES.has(route.name?.toString() ?? '')) {
   await locationsStore.refreshLocations();
 }
 
-if (CURRENT_LOCATION_PAGES.has(route.name?.toString() ?? '')) {
+if (CURRENT_LOCATION_PAGES.has(route.name?.toString() ?? '')  || CURRENT_LOCATION_LOG_PAGES.has(route.name?.toString() || "")) {
   await locationsStore.refreshCurrentLocation();
+}
+
+if (CURRENT_LOCATION_LOG_PAGES.has(route.name?.toString() ?? '')) {
+  await locationsStore.refreshCurrentLocationLog();
 }
 
 onMounted(() => {
@@ -40,14 +44,14 @@ watchEffect(() => {
       label: 'Locations',
       href: '/dashboard',
       icon: 'tabler:map'
-    },
-    {
+    }, {
       id: 'link-location-add',
       label: 'Add Location',
       href: '/dashboard/addLocation',
       icon: 'tabler:circle-plus-filled'
-    }]
-  } else if (CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")) {
+    }];
+  }
+  else if (CURRENT_LOCATION_PAGES.has(route.name?.toString() || '')) {
     sidebarStore.sidebarTopItems = [{
       id: "link-dashboard",
       label: "Back to Locations",
@@ -60,31 +64,47 @@ watchEffect(() => {
 
       if (slug) {
         sidebarStore.sidebarTopItems.push({
-        id: "link-dashboard",
-        label: currentLocation.value.name,
+          id: "link-current-location",
+          label: currentLocation.value.name,
+          to: {
+            name: "dashboard-location-slug",
+            params: {slug},
+          },
+          icon: "tabler:map",
+        }, {
+          id: "link-location-edit",
+          label: "Edit Location",
+          to: {
+            name: "dashboard-location-slug-edit",
+            params: {slug},
+          },
+          icon: "tabler:map-pin-cog",
+        }, {
+          id: "link-location-add",
+          label: "Add Location Log",
+          to: {
+            name: "dashboard-location-slug-add",
+            params: {slug},
+          },
+          icon: "tabler:circle-plus-filled",
+        });
+      }
+    }
+  }
+  else if (CURRENT_LOCATION_LOG_PAGES.has(route.name?.toString() || "")) {
+    if (currentLocation.value && currentLocationStatus.value !== "pending") {
+      sidebarStore.sidebarTopItems = [{
+        id: "link-current-location",
+        label: `Back to "${currentLocation.value.name}"`,
         to: {
           name: "dashboard-location-slug",
-          params: { slug },
+          params: {
+            slug: String(currentLocation.value.slug),
+          },
+          query: {},
         },
-        icon: "tabler:map",
-      }, {
-        id: "link-location-edit",
-        label: "Edit Location",
-        to: {
-          name: "dashboard-location-slug-edit",
-          params: { slug },
-        },
-        icon: "tabler:map-pin-cog",
-      }, {
-        id: "link-location-add",
-        label: "Add Location Log",
-        to: {
-          name: "dashboard-location-slug-add",
-          params: { slug },
-        },
-        icon: "tabler:circle-plus-filled",
-      });
-      }
+        icon: "tabler:arrow-left",
+      }];
     }
   }
 })
@@ -93,6 +113,7 @@ function toggleSidebar() {
   isSidebarOpen.value = !isSidebarOpen.value;
   localStorage.setItem('isSidebarOpen', isSidebarOpen.value.toString());
 }
+
 </script>
 
 <template>

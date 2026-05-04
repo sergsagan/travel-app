@@ -1,6 +1,6 @@
 import type { LngLatBounds } from "maplibre-gl";
 import type { MapPoint } from '~/lib/types';
-import {CENTER_EUROPE} from "~/lib/constants";
+import { CENTER_EUROPE } from "~/lib/constants";
 
 export const useMapStore = defineStore('useMapStore', () => {
   const mapPoints = shallowRef<MapPoint[]>([]);
@@ -62,17 +62,21 @@ export const useMapStore = defineStore('useMapStore', () => {
         bounds.value = null;
         map.map?.flyTo({
           center: CENTER_EUROPE,
-          zoom: 2
+          zoom: 3
         })
         return;
       }
 
       if (validPoints.length === 1) {
+        map.map?.flyTo({
+          center: [firstPoint.long, firstPoint.lat],
+          zoom: 12,
+          speed: 0.5
+        });
+
         bounds.value = null;
         return;
       }
-
-
 
       bounds.value = points.reduce((computedBounds, point) => {
         if (!isValidCoord(point)) return computedBounds;
@@ -88,7 +92,7 @@ export const useMapStore = defineStore('useMapStore', () => {
           if (shouldFlyTo.value) {
             map.map?.flyTo({
               center: [selectedPoint.value.long, selectedPoint.value.lat],
-              zoom: 6,
+              zoom: 12,
               speed: 0.5
             })
           }
@@ -105,8 +109,8 @@ export const useMapStore = defineStore('useMapStore', () => {
       if ((newValue && !oldValue) || newValue?.centerMap) {
         map.map?.flyTo({
             center: [newValue.long, newValue.lat],
-            speed: 0.5,
-            zoom: newValue.zoom || 6,
+            speed: 0.8,
+            zoom: newValue.zoom || 12,
         })
       }
     }, { immediate: true });

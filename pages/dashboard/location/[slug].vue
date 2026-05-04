@@ -45,7 +45,7 @@ async function confirmDelete() {
 
 onMounted(() => {
   locationsStore.refreshCurrentLocation();
-})
+});
 
 onBeforeRouteUpdate((to, from) => {
   const toName = to.name?.toString() || '';
@@ -56,7 +56,7 @@ onBeforeRouteUpdate((to, from) => {
   if (isCurrentLocationPage && (slugChanged || routeChanged)) {
     locationsStore.refreshCurrentLocation();
   }
-})
+});
 </script>
 
 <template>
