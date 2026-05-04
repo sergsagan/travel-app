@@ -13,6 +13,7 @@ import { CENTER_EUROPE } from '~/lib/constants';
 
 const flyTo = vi.fn();
 const fitBounds = vi.fn();
+const resize = vi.fn();
 
 class MockLngLatBounds {
   points: Array<[number, number]> = [];
@@ -36,6 +37,7 @@ vi.mock('@indoorequal/vue-maplibre-gl', () => ({
     map: {
       flyTo,
       fitBounds,
+      resize,
     },
   }),
 }));
@@ -60,6 +62,7 @@ describe('map store integration', () => {
     setActivePinia(createPinia());
     flyTo.mockReset();
     fitBounds.mockReset();
+    resize.mockReset();
   });
 
   it('handles map centering and bounds updates', async () => {
@@ -82,6 +85,24 @@ describe('map store integration', () => {
     expect(fitBounds).toHaveBeenCalledWith(expect.any(MockLngLatBounds), {
       padding: 60,
       maxZoom: 12,
+    });
+  });
+
+  it('centers map when only one point is available', async () => {
+    const store = await createStore();
+    await store.init();
+    await nextTick();
+    flyTo.mockClear();
+
+    store.mapPoints = [
+      { id: 16, name: 'Park Marjan', description: null, lat: 43.5171, long: 16.4189 },
+    ];
+    await nextTick();
+
+    expect(flyTo).toHaveBeenCalledWith({
+      center: [16.4189, 43.5171],
+      zoom: 12,
+      speed: 0.5,
     });
   });
 

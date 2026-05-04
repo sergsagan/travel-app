@@ -1,4 +1,4 @@
-import type {SelectLocation, SelectLocationLog, SelectLocationWithLogs} from '~/lib/db/schema';
+import type { SelectLocation, SelectLocationLog, SelectLocationWithLogs } from '~/lib/db/schema';
 import type { MapPoint } from '~/lib/types';
 
 import {
@@ -11,6 +11,10 @@ import { createMapPointFromLocation, createMapPointFromLocationLog } from '~/uti
 
 export const useLocationStore = defineStore('useLocationStore', () => {
   const route = useRoute();
+
+  const locationUrlWithSlug = computed(() => `/api/locations/${route.params.slug}`);
+  const locationLogUrlWithSlugAndId = computed(() => `/api/locations/${route.params.slug}/${route.params.id}`);
+
   const {
     data: locations,
     status: locationsStatus,
@@ -24,11 +28,7 @@ export const useLocationStore = defineStore('useLocationStore', () => {
     status: currentLocationStatus,
     error: currentLocationError,
     refresh: refreshCurrentLocation,
-  } = useFetch<SelectLocationWithLogs>(
-    () => {
-      const slug = route.params.slug;
-      return `/api/locations/${slug}`;
-    },
+  } = useFetch<SelectLocationWithLogs>(locationUrlWithSlug,
     {
       lazy: true,
       immediate: false,
@@ -41,18 +41,16 @@ export const useLocationStore = defineStore('useLocationStore', () => {
     status: currentLocationLogStatus,
     error: currentLocationLogError,
     refresh: refreshCurrentLocationLog,
-  } = useFetch<SelectLocationLog>(
-      () => {
-        const slug = route.params.slug;
-        const id = route.params.id;
-        return `/api/locations/${slug}/${id}`;
-      },
+  } = useFetch<SelectLocationLog>(locationLogUrlWithSlugAndId,
       {
         lazy: true,
         immediate: false,
         watch: false,
       },
   );
+
+  const sidebarStore = useSidebarStore();
+  const mapStore = useMapStore();
 
   watch(
     () => route.params.slug,
@@ -76,35 +74,21 @@ export const useLocationStore = defineStore('useLocationStore', () => {
     { immediate: true },
   );
 
-  const sidebarStore = useSidebarStore();
-  const mapStore = useMapStore();
-
   watch(
     [
       locations,
       currentLocation,
+      currentLocationLog,
       () => route.name,
       locationsStatus,
       currentLocationStatus,
+      currentLocationLogStatus
     ],
     () => {
       const routeName = route.name?.toString() || '';
       const isLocationPage = LOCATION_PAGES.has(routeName);
       const isCurrentLocationPage = CURRENT_LOCATION_PAGES.has(routeName);
       const isCurrentLocationLogPage = CURRENT_LOCATION_LOG_PAGES.has(routeName);
-      const isLocationRelatedPage = isCurrentLocationPage || isCurrentLocationLogPage;
-
-      sidebarStore.loading = isLocationPage
-        ? locationsStatus.value === 'pending'
-        : isLocationRelatedPage
-          ? currentLocationStatus.value === 'pending'
-          : false;
-
-      if (sidebarStore.loading) {
-        sidebarStore.sidebarItems = [];
-        mapStore.mapPoints = [];
-        return;
-      }
 
       if (locations.value && isLocationPage) {
         const mapPoints: MapPoint[] = [];
@@ -126,11 +110,8 @@ export const useLocationStore = defineStore('useLocationStore', () => {
 
         sidebarStore.sidebarItems = sidebarItems;
         mapStore.mapPoints = mapPoints;
-
-        return;
       }
-
-      if (currentLocation.value && isLocationRelatedPage) {
+      else if (currentLocation.value && isCurrentLocationPage) {
         const location = currentLocation.value;
         const logs = currentLocation.value.locationLogs ?? [];
 
@@ -139,8 +120,8 @@ export const useLocationStore = defineStore('useLocationStore', () => {
 
         logs.forEach((log) => {
           const mapPoint = createMapPointFromLocationLog(
-            log,
-            location.slug,
+              log,
+              location.slug,
           );
 
           sidebarItems.push({
@@ -157,28 +138,35 @@ export const useLocationStore = defineStore('useLocationStore', () => {
         sidebarStore.sidebarItems = sidebarItems;
 
         mapStore.mapPoints = mapPoints.length
-          ? mapPoints
-          : [createMapPointFromLocation(location)];
-
-        return;
+            ? mapPoints
+            : [createMapPointFromLocation(location)];
+      }
+      else if (currentLocationLog.value && isCurrentLocationLogPage && currentLocation.value) {
+        sidebarStore.sidebarItems = [];
+        mapStore.mapPoints = [createMapPointFromLocationLog(
+            currentLocationLog.value,
+            currentLocation.value.slug,
+        )];
       }
 
-      sidebarStore.sidebarItems = [];
-      mapStore.mapPoints = [];
-    },
-    {
-      immediate: true,
-    },
+      sidebarStore.loading = locationsStatus.value === "pending" || currentLocationStatus.value === "pending";
+
+      if (sidebarStore.loading) {
+        mapStore.mapPoints = [];
+      }
+    }
   );
 
   return {
     locations,
     locationsStatus,
     refreshLocations,
+
     currentLocation,
     currentLocationStatus,
     currentLocationError,
     refreshCurrentLocation,
+
     currentLocationLog,
     currentLocationLogStatus,
     currentLocationLogError,

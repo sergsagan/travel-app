@@ -13,9 +13,7 @@ const loading = computed(() => status.value === 'pending');
 const errorMessage = computed(() => error.value?.statusMessage);
 
 onMounted(() => {
-  if (typeof route.params.slug === 'string' && typeof route.params.id === 'string') {
-    locationsStore.refreshCurrentLocationLog();
-  }
+  locationsStore.refreshCurrentLocationLog();
 });
 </script>
 
