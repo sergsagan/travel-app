@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import type { InsertLocationLog } from "~/lib/db/schema";
 import { CENTER_EUROPE } from "~/lib/constants";
+
 const route = useRoute();
 const { currentLocation } = useLocationStore();
+
+const slug = computed(() => route.params.slug as string);
 
 const { getCsrfHeaders } = useCsrfHeaders();
 const { submitLocation } = useLocationSubmit(getCsrfHeaders);
@@ -14,7 +17,7 @@ async function onSubmit(values: InsertLocationLog) {
 function submitComplete() {
     navigateTo({
       name: 'dashboard-location-slug',
-      params: { slug: route.params.slug as string },
+      params: { slug: slug.value },
     });
 }
 </script>

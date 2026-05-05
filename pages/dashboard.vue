@@ -9,7 +9,7 @@ const sidebarStore = useSidebarStore();
 const locationsStore = useLocationStore();
 const mapStore = useMapStore();
 const showMap = ref(false)
-const { currentLocation, currentLocationStatus } = storeToRefs(locationsStore);
+const { currentLocation, currentLocationStatus, currentLocationLog } = storeToRefs(locationsStore);
 
 if (LOCATION_PAGES.has(route.name?.toString() ?? '')) {
   await locationsStore.refreshLocations();
@@ -92,7 +92,7 @@ watchEffect(() => {
     }
   }
   else if (CURRENT_LOCATION_LOG_PAGES.has(route.name?.toString() || "")) {
-    if (currentLocation.value && currentLocationStatus.value !== "pending") {
+    if (currentLocation.value && currentLocationLog.value && currentLocationStatus.value !== "pending") {
       sidebarStore.sidebarTopItems = [{
         id: "link-current-location",
         label: `Back to "${currentLocation.value.name}"`,
@@ -104,6 +104,29 @@ watchEffect(() => {
           query: {},
         },
         icon: "tabler:arrow-left",
+      }, {
+        id: "link-edit-location-log",
+        label: "View Log",
+        to: {
+          name: "dashboard-location-slug-id",
+          params: {
+            slug: String(currentLocation.value.slug),
+            id: String(currentLocationLog.value.id),
+          },
+        },
+        icon: "tabler:map-pin",
+      }, {
+        id: "link-location-log-edit",
+        label: "Edit Log",
+        to: {
+          name: "dashboard-location-slug-id-edit",
+          params: {
+            slug: String(currentLocation.value.slug),
+            id: String(currentLocationLog.value.id),
+          },
+          query: {},
+        },
+        icon: "tabler:map-pin-cog",
       }];
     }
   }
