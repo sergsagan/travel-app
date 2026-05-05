@@ -17,7 +17,7 @@ export default function defineAuthenticatedEventHandler<T>(
       verifyCsrf(event);
     }
 
-    if (!event.context.user) {
+    if (!event.context.user?.id) {
       throw createError({
         statusCode: 401,
         statusMessage: 'Unauthorized',

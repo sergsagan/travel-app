@@ -3,12 +3,7 @@ import { afterAll, describe, expect, it } from 'vitest';
 
 process.env.TEST_ENABLE_AUTH = 'true';
 
-describe('auth flow integration', async () => {
-  await setup({
-    server: true,
-    browser: false,
-    setupTimeout: 300_000,
-  });
+describe('auth flow integration',  () => {
 
   afterAll(() => {
     delete process.env.TEST_ENABLE_AUTH;
