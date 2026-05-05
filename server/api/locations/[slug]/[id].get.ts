@@ -21,7 +21,7 @@ export default defineAuthenticatedEventHandler(async (event) => {
             message: 'Invalid id',
         }));
     }
-    const locationLog = await findLocationLog(Number(id), event.context.user.id);
+    const locationLog = await findLocationLog(Number(id), location.id, event.context.user.id);
 
     if (!locationLog) {
         return sendError(event, createError({

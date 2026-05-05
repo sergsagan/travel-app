@@ -1,7 +1,6 @@
 import { findLocation } from '~/lib/db/queries/location';
 import defineAuthenticatedEventHandler from '~/utils/defineAuthenticatedEventHandler';
 import { z } from "zod";
-import { LocationLogFormSchema } from "~/lib/zodSchemas";
 import { updateLocationLog } from '~/lib/db/queries/locationLog';
 import sendZodError from "~/utils/sendZodError";
 import { InsertLocationSchemaLog } from "~/lib/db/schema";
@@ -31,7 +30,7 @@ export default defineAuthenticatedEventHandler(async (event) => {
             message: 'Invalid id',
         }));
     }
-    const locationLog = await updateLocationLog(Number(id), result.data, event.context.user.id);
+    const locationLog = await updateLocationLog(Number(id), location.id, result.data, event.context.user.id);
 
     if (!locationLog) {
         return sendError(event, createError({
