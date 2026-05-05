@@ -76,7 +76,7 @@ await mapStore.init()
       </template>
       <MglPopup>
         <h3 class="text-xl">{{ point.name }}</h3>
-        <p v-if="point.description">{{ point.description }}</p>
+        <p v-if="point.description" class="whitespace-pre-line">{{ point.description }}</p>
         <p>coordinates: <br/> long: {{ formatNumber(point.long) }}, lat: {{ formatNumber(point.lat) }}</p>
         <div class="flex items-end mt-4">
           <NuxtLink v-if="point.to" :to="point.to" class="btn btn-sm btn-outline">

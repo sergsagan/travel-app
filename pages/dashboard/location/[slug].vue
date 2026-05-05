@@ -92,7 +92,7 @@ onBeforeRouteUpdate((to, from) => {
           </ul>
         </div>
       </h2>
-      <p class="text-sm">{{ location.description }}</p>
+      <p class="text-sm whitespace-pre-line">{{ location.description }}</p>
       <div v-if="(location.locationLogs?.length ?? 0) === 0" class="mt-4">
         <p class="text-sm italic">
           Add a location log to get started

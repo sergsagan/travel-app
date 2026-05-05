@@ -41,7 +41,7 @@ onBeforeRouteUpdate((to) => {
       <h2 class="text-xl">
         {{ locationLog.name }}
       </h2>
-      <p class="text-sm">{{ locationLog.description }}</p>
+      <p class="text-sm whitespace-pre-line">{{ locationLog.description }}</p>
     </div>
     <div v-else>
       <NuxtPage />

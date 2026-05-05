@@ -31,7 +31,7 @@ const linkTo = computed<RouteLocationRaw | string>(() => {
       <h3 class="text-xl truncate">
         {{ props.mapPoint?.name }}
       </h3>
-      <p class="line-clamp-4 wrap-break-word">{{ props.mapPoint?.description }}</p>
+      <p class="line-clamp-4 wrap-break-word whitespace-pre-line">{{ props.mapPoint?.description }}</p>
     </div>
   </NuxtLink>
   <div v-else class="card card-compact bg-base-200 border-2 h-40 w-72 mb-4 shrink-0" />
