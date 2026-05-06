@@ -1,40 +1,33 @@
 <script setup lang="ts">
-import type { InsertLocationLog } from "~/lib/db/schema";
-import { CENTER_EUROPE } from "~/lib/constants";
+import type { InsertLocationLog } from '~/lib/db/schema';
 
-const route = useRoute();
+import { useLocationRouteParams } from '~/composables/useLocationRouteParams';
+import { CENTER_EUROPE } from '~/lib/constants';
+
 const { currentLocation } = useLocationStore();
-
-const slug = computed(() => route.params.slug as string);
+const { slug, navigateToLocation } = useLocationRouteParams();
 
 const { getCsrfHeaders } = useCsrfHeaders();
 const { submitLocation } = useLocationSubmit(getCsrfHeaders);
 
 async function onSubmit(values: InsertLocationLog) {
-  await submitLocation(`/api/locations/${route.params.slug}/add`, 'post', values);
-}
-
-function submitComplete() {
-    navigateTo({
-      name: 'dashboard-location-slug',
-      params: { slug: slug.value },
-    });
+  await submitLocation(`/api/locations/${slug.value}/add`, 'post', values);
 }
 </script>
 
 <template>
   <LocationLogsForm
-      submitLabel="Add Location Log"
-      submitIcon="tabler:map-pin-plus"
-      :onSubmit="onSubmit"
-      :onSubmitComplete="submitComplete"
-      :initialValues="{
-        name: '',
-        description: '',
-        lat: currentLocation?.lat || CENTER_EUROPE[1],
-        long: currentLocation?.long || CENTER_EUROPE[0],
-        startedAt: Date.now(),
-        endedAt: Date.now(),
-      }"
+    submit-label="Add Location Log"
+    submit-icon="tabler:map-pin-plus"
+    :on-submit="onSubmit"
+    :on-submit-complete="navigateToLocation"
+    :initial-values="{
+      name: '',
+      description: '',
+      lat: currentLocation?.lat || CENTER_EUROPE[1],
+      long: currentLocation?.long || CENTER_EUROPE[0],
+      startedAt: Date.now(),
+      endedAt: Date.now(),
+    }"
   />
 </template>

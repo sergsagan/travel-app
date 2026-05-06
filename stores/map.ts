@@ -99,7 +99,7 @@ export const useMapStore = defineStore('useMapStore', () => {
           shouldFlyTo.value = true;
         } else if (bounds.value) {
           map.map?.fitBounds(bounds.value, {
-            padding,
+            padding: padding,
             maxZoom: 12,
           });
         }

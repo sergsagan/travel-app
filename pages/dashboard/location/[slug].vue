@@ -1,47 +1,27 @@
 <script setup lang="ts">
+import AppDialog from '~/components/app/appDialog.vue';
+import { useConfirmDelete } from '~/composables/useConfirmDelete';
 import { CURRENT_LOCATION_PAGES } from '~/lib/constants';
-import AppDialog from "~/components/app/appDialog.vue";
-import type { FetchError } from 'ofetch';
-import { createMapPointFromLocationLog } from "~/utils/mapPoints";
 import { toDateTimeLocal } from '~/utils/date';
+import { createMapPointFromLocationLog } from '~/utils/mapPoints';
 
 const route = useRoute();
 const locationsStore = useLocationStore();
-const { getCsrfHeaders } = useCsrfHeaders();
 const { currentLocation: location, currentLocationStatus: status, currentLocationError: error } = storeToRefs(locationsStore);
 
-const isOpen = ref(false);
-const deleteError = ref('');
-const isDeleting = ref(false);
+const {
+  isOpen,
+  deleteError,
+  isDeleting,
+  openDialog,
+  confirmDelete,
+} = useConfirmDelete({
+  endpoint: () => `/api/locations/${route.params.slug}`,
+  redirectTo: () => '/dashboard',
+});
 
 const loading = computed(() => status.value === 'pending' || isDeleting.value);
 const errorMessage = computed(() => error.value?.statusMessage || deleteError.value);
-
-function openDialog() {
-  isOpen.value = true;
-  (document.activeElement as HTMLAnchorElement)?.blur();
-}
-
-async function confirmDelete() {
-  try {
-    isOpen.value = false;
-    deleteError.value = '';
-    isDeleting.value = true;
-    await $fetch(`/api/locations/${route.params.slug}`, {
-      method: 'DELETE',
-      credentials: 'same-origin',
-      headers: {
-        ...getCsrfHeaders(),
-      },
-    });
-    navigateTo('/dashboard');
-  }
-  catch (e) {
-    const error = e as FetchError;
-    deleteError.value = getFetchErrorMessage(error);
-  }
-  isDeleting.value = false;
-}
 
 onMounted(() => {
   locationsStore.refreshCurrentLocation();
@@ -73,7 +53,11 @@ onBeforeRouteUpdate((to, from) => {
       <h2 class="text-xl">
         {{ location.name }}
         <div class="dropdown dropdown-bottom">
-          <div tabindex="0" role="button" class="btn btn-sm m-1 p-0">
+          <div
+            tabindex="0"
+            role="button"
+            class="btn btn-sm m-1 p-0"
+          >
             <Icon name="tabler:dots-vertical" size="20" />
           </div>
           <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
@@ -92,15 +76,17 @@ onBeforeRouteUpdate((to, from) => {
           </ul>
         </div>
       </h2>
-      <p class="text-sm whitespace-pre-line">{{ location.description }}</p>
+      <p class="text-sm whitespace-pre-line">
+        {{ location.description }}
+      </p>
       <div v-if="(location.locationLogs?.length ?? 0) === 0" class="mt-4">
         <p class="text-sm italic">
           Add a location log to get started
         </p>
         <NuxtLink
-            v-if="location?.slug"
-            :to="{ name: 'dashboard-location-slug-add', params:{ slug: location?.slug }}"
-            class="btn btn-primary mt-2"
+          v-if="location?.slug"
+          :to="{ name: 'dashboard-location-slug-add', params: { slug: location?.slug } }"
+          class="btn btn-primary mt-2"
         >
           Add Location Log
           <Icon name="tabler:map-pin-plus" size="24" />
@@ -109,11 +95,11 @@ onBeforeRouteUpdate((to, from) => {
     </div>
     <div v-if="route.name === 'dashboard-location-slug' && !loading && (location?.locationLogs?.length ?? 0) > 0" class="location-list">
       <LocationCard
-          v-for="log in location?.locationLogs"
-          :key="log.id"
-          :map-point="createMapPointFromLocationLog(log, location?.slug)"
+        v-for="log in location?.locationLogs"
+        :key="log.id"
+        :map-point="createMapPointFromLocationLog(log, location?.slug)"
       >
-        <template v-slot:top>
+        <template #top>
           <p class="text-small italic text-gray-500">
             <span v-if="log.startedAt !== log.endedAt">
               {{ toDateTimeLocal(log.startedAt) }} / {{ toDateTimeLocal(log.endedAt) }}
@@ -129,13 +115,13 @@ onBeforeRouteUpdate((to, from) => {
       <NuxtPage />
     </div>
     <AppDialog
-        title="Are you sure"
-        description="Deleting this location will also delete all of the associated logs. This action cannot be undone. Do you really want to do this?"
-        confirm-label="Delete"
-        confirm-class="btn-error"
-        :is-open="isOpen"
-        @on-closed="isOpen = false"
-        @on-confirmed="confirmDelete"
+      title="Are you sure"
+      description="Deleting this location will also delete all of the associated logs. This action cannot be undone. Do you really want to do this?"
+      confirm-label="Delete"
+      confirm-class="btn-error"
+      :is-open="isOpen"
+      @on-closed="isOpen = false"
+      @on-confirmed="confirmDelete"
     />
   </div>
 </template>
