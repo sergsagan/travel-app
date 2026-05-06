@@ -1,62 +1,39 @@
 <script setup lang="ts">
-import { toDateTimeLocal } from "~/utils/date";
-import AppDialog from "~/components/app/appDialog.vue";
-import type { FetchError } from 'ofetch';
+import AppDialog from '~/components/app/appDialog.vue';
+import { useConfirmDelete } from '~/composables/useConfirmDelete';
+import { useLocationRouteParams } from '~/composables/useLocationRouteParams';
+import { toDateTimeLocal } from '~/utils/date';
 
 const route = useRoute();
 const locationsStore = useLocationStore();
-const { getCsrfHeaders } = useCsrfHeaders();
 const {
   currentLocationLog: locationLog,
   currentLocationLogStatus: status,
-  currentLocationLogError: error
+  currentLocationLogError: error,
 } = storeToRefs(locationsStore);
 
-const isOpen = ref(false);
-const deleteError = ref('');
-const isDeleting = ref(false);
+const { slug, id, locationRoute } = useLocationRouteParams();
+
+const {
+  isOpen,
+  deleteError,
+  isDeleting,
+  openDialog,
+  confirmDelete,
+} = useConfirmDelete({
+  endpoint: () => `/api/locations/${slug.value}/${id.value}`,
+  redirectTo: locationRoute,
+});
 
 const loading = computed(() => isDeleting.value || status.value === 'pending');
 const errorMessage = computed(() => deleteError.value || error.value?.statusMessage);
 
-const slug = computed(() => route.params.slug as string);
-const id = computed(() => route.params.id as string);
-
-async function confirmDelete() {
-  try {
-    isOpen.value = false;
-    deleteError.value = '';
-    isDeleting.value = true;
-    await $fetch(`/api/locations/${slug.value}/${id.value}`, {
-      method: 'DELETE',
-      credentials: 'same-origin',
-      headers: {
-        ...getCsrfHeaders(),
-      },
-    });
-    navigateTo({
-      name: 'dashboard-location-slug',
-      params: { slug: slug.value },
-    });
-  }
-  catch (e) {
-    const error = e as FetchError;
-    deleteError.value = getFetchErrorMessage(error);
-  }
-  isDeleting.value = false;
-}
-
-function openDialog() {
-  isOpen.value = true;
-  (document.activeElement as HTMLAnchorElement)?.blur();
-}
-
 onMounted(() => {
   locationsStore.refreshCurrentLocationLog();
-})
+});
 
 onBeforeRouteUpdate((to) => {
-  if (to.name === "dashboard-location-slug-id") {
+  if (to.name === 'dashboard-location-slug-id') {
     locationsStore.refreshCurrentLocationLog();
   }
 });
@@ -85,9 +62,9 @@ onBeforeRouteUpdate((to) => {
         {{ locationLog.name }}
         <div class="dropdown dropdown-bottom">
           <div
-              tabindex="0"
-              role="button"
-              class="btn m-1 btn-sm p-0"
+            tabindex="0"
+            role="button"
+            class="btn m-1 btn-sm p-0"
           >
             <Icon name="tabler:dots-vertical" size="20" />
           </div>
@@ -100,7 +77,7 @@ onBeforeRouteUpdate((to) => {
             </li>
             <li>
               <NuxtLink
-                  :to="{
+                :to="{
                   name: 'dashboard-location-slug-id-edit',
                   params: { slug, id },
                 }"
@@ -112,19 +89,21 @@ onBeforeRouteUpdate((to) => {
           </ul>
         </div>
       </h2>
-      <p class="text-sm whitespace-pre-line">{{ locationLog.description }}</p>
+      <p class="text-sm whitespace-pre-line">
+        {{ locationLog.description }}
+      </p>
     </div>
     <div v-else>
       <NuxtPage />
     </div>
     <AppDialog
-        title="Are you sure"
-        description="Deleting this location log cannot be undone. Do you really want to do this?"
-        confirm-label="Delete"
-        confirm-class="btn-error"
-        :is-open="isOpen"
-        @on-closed="isOpen = false"
-        @on-confirmed="confirmDelete"
+      title="Are you sure"
+      description="Deleting this location log cannot be undone. Do you really want to do this?"
+      confirm-label="Delete"
+      confirm-class="btn-error"
+      :is-open="isOpen"
+      @on-closed="isOpen = false"
+      @on-confirmed="confirmDelete"
     />
   </div>
 </template>
