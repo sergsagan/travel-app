@@ -1,28 +1,31 @@
 <script setup lang="ts">
-import type {FetchError} from "ofetch";
-import {toTypedSchema} from '@vee-validate/zod';
-import type {NominatimResult} from "~/lib/types";
-import {SearchSchema} from "~/lib/zodSchemas";
+import type { FetchError } from 'ofetch';
+import { toTypedSchema } from '@vee-validate/zod';
+import type { NominatimResult } from '~/lib/types';
+import { SearchSchema } from '~/lib/zodSchemas';
 
 const emit = defineEmits<{
   resultSelected: [result: NominatimResult];
 }>();
 
+const searchEndpoint: string = '/api/search';
 const searchResults = ref<NominatimResult[]>([]);
 const form = useTemplateRef('form');
 const loading = ref(false);
 const hasSearched = ref(false);
 const errorMessage = ref('');
 
-async function onSubmit(q: Record<string, string>) {
+async function onSubmit(values: Record<string, unknown>) {
+  const { q } = SearchSchema.parse(values);
+
   try {
     loading.value = true;
     hasSearched.value = true;
     errorMessage.value = '';
     searchResults.value = [];
-    searchResults.value = await $fetch('/api/search', {
+    searchResults.value = await $fetch<NominatimResult[]>(searchEndpoint, {
       query: {
-        q: q.q,
+        q,
       },
     });
   }
@@ -30,7 +33,9 @@ async function onSubmit(q: Record<string, string>) {
     const error = e as FetchError;
     errorMessage.value = getFetchErrorMessage(error);
   }
-  loading.value = false;
+  finally {
+    loading.value = false;
+  }
 }
 
 function setLocation(result: NominatimResult) {
@@ -47,25 +52,25 @@ function setLocation(result: NominatimResult) {
 <template>
   <div class="flex flex-col gap-2">
     <Form
-        v-slot="{ errors }"
-        ref="form"
-        class="flex flex-col gap-2 items-center"
-        :validation-schema="toTypedSchema(SearchSchema)"
-        :initial-values="{ q: '' }"
-        @submit="onSubmit"
+      v-slot="{ errors }"
+      ref="form"
+      class="flex flex-col gap-2 items-center"
+      :validation-schema="toTypedSchema(SearchSchema)"
+      :initial-values="{ q: '' }"
+      @submit="onSubmit"
     >
       <div class="join">
         <div>
           <label for="" class="input join-item">
             <Icon name="tabler:search" size="20" />
             <Field
-                type="text"
-                name="q"
-                placeholder="Search for a location..."
-                :disabled="loading"
-                :class="{
-                  'input-error': errors.q,
-                }"
+              type="text"
+              name="q"
+              placeholder="Search for a location..."
+              :disabled="loading"
+              :class="{
+                'input-error': errors.q,
+              }"
             />
           </label>
           <div v-if="errors.q" class="validator-hint text-error">
@@ -73,24 +78,24 @@ function setLocation(result: NominatimResult) {
           </div>
         </div>
         <button
-            class="btn btn-neutral join-item"
-            :disabled="loading"
-            >
+          class="btn btn-neutral join-item"
+          :disabled="loading"
+        >
           Search
         </button>
       </div>
     </Form>
     <div
-        v-if="!loading && errorMessage"
-        role="alert"
-        class="alert alert-error"
+      v-if="!loading && errorMessage"
+      role="alert"
+      class="alert alert-error"
     >
       {{ errorMessage }}
     </div>
     <div
-        v-if="!loading && hasSearched && !searchResults.length"
-        role="alert"
-        class="alert alert-warning"
+      v-if="!loading && hasSearched && !searchResults.length"
+      role="alert"
+      class="alert alert-warning"
     >
       No results found.
     </div>
@@ -99,9 +104,9 @@ function setLocation(result: NominatimResult) {
     </div>
     <div class="flex flex-col overflow-auto gap-2 max-h-60 mt-2">
       <div
-          v-for="result in searchResults"
-          :key="result.place_id"
-          class="card card-sm bg-base-100 shadow cursor-pointer"
+        v-for="result in searchResults"
+        :key="result.place_id"
+        class="card card-sm bg-base-100 shadow cursor-pointer"
       >
         <div class="card-body">
           <h4 class="card-title">
