@@ -21,6 +21,7 @@ export const useLocationStore = defineStore('useLocationStore', () => {
     refresh: refreshLocations,
   } = useFetch<SelectLocation[]>('/api/locations', {
     lazy: true,
+    immediate: false,
   });
 
   const {
@@ -28,26 +29,22 @@ export const useLocationStore = defineStore('useLocationStore', () => {
     status: currentLocationStatus,
     error: currentLocationError,
     refresh: refreshCurrentLocation,
-  } = useFetch<SelectLocationWithLogs>(locationUrlWithSlug,
-    {
-      lazy: true,
-      immediate: false,
-      watch: false,
-    },
-  );
+  } = useFetch<SelectLocationWithLogs>(locationUrlWithSlug, {
+    lazy: true,
+    immediate: false,
+    watch: false,
+  });
 
   const {
     data: currentLocationLog,
     status: currentLocationLogStatus,
     error: currentLocationLogError,
     refresh: refreshCurrentLocationLog,
-  } = useFetch<SelectLocationLog>(locationLogUrlWithSlugAndId,
-      {
-        lazy: true,
-        immediate: false,
-        watch: false,
-      },
-  );
+  } = useFetch<SelectLocationLog>(locationLogUrlWithSlugAndId, {
+    lazy: true,
+    immediate: false,
+    watch: false,
+  });
 
   const sidebarStore = useSidebarStore();
   const mapStore = useMapStore();
@@ -82,13 +79,28 @@ export const useLocationStore = defineStore('useLocationStore', () => {
       () => route.name,
       locationsStatus,
       currentLocationStatus,
-      currentLocationLogStatus
+      currentLocationLogStatus,
     ],
     () => {
       const routeName = route.name?.toString() || '';
       const isLocationPage = LOCATION_PAGES.has(routeName);
       const isCurrentLocationPage = CURRENT_LOCATION_PAGES.has(routeName);
       const isCurrentLocationLogPage = CURRENT_LOCATION_LOG_PAGES.has(routeName);
+      const isLoading = (
+        (isLocationPage && locationsStatus.value === 'pending')
+        || (isCurrentLocationPage && currentLocationStatus.value === 'pending')
+        || (isCurrentLocationLogPage && (
+          currentLocationStatus.value === 'pending'
+          || currentLocationLogStatus.value === 'pending'
+        ))
+      );
+
+      sidebarStore.loading = isLoading;
+
+      if (isLoading) {
+        mapStore.mapPoints = [];
+        return;
+      }
 
       if (locations.value && isLocationPage) {
         const mapPoints: MapPoint[] = [];
@@ -120,8 +132,8 @@ export const useLocationStore = defineStore('useLocationStore', () => {
 
         logs.forEach((log) => {
           const mapPoint = createMapPointFromLocationLog(
-              log,
-              location.slug,
+            log,
+            location.slug,
           );
 
           sidebarItems.push({
@@ -138,23 +150,18 @@ export const useLocationStore = defineStore('useLocationStore', () => {
         sidebarStore.sidebarItems = sidebarItems;
 
         mapStore.mapPoints = mapPoints.length
-            ? mapPoints
-            : [createMapPointFromLocation(location)];
+          ? mapPoints
+          : [createMapPointFromLocation(location)];
       }
       else if (currentLocationLog.value && isCurrentLocationLogPage && currentLocation.value) {
         sidebarStore.sidebarItems = [];
         mapStore.mapPoints = [createMapPointFromLocationLog(
-            currentLocationLog.value,
-            currentLocation.value.slug,
+          currentLocationLog.value,
+          currentLocation.value.slug,
         )];
       }
-
-      sidebarStore.loading = locationsStatus.value === "pending" || currentLocationStatus.value === "pending";
-
-      if (sidebarStore.loading) {
-        mapStore.mapPoints = [];
-      }
-    }
+    },
+    { immediate: true },
   );
 
   return {
