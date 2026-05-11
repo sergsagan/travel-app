@@ -25,3 +25,4 @@ logs
 local.db*
 lib/db/migrations
 AGENTS.md
+docker-data
