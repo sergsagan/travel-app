@@ -48,6 +48,11 @@ export default defineNuxtConfig({
     build: {
       cssCodeSplit: false,
     },
+    server: {
+      watch: {
+        ignored: ['./docker-data/*']
+      }
+    }
   },
   colorMode: {
     dataValue: 'theme',
